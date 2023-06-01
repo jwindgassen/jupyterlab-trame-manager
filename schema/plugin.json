@@ -1,0 +1,8 @@
+{
+  "jupyter.lab.shortcuts": [],
+  "title": "jupyter-viz-extension",
+  "description": "jupyter-viz-extension settings.",
+  "type": "object",
+  "properties": {},
+  "additionalProperties": false
+}

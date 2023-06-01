@@ -1,0 +1,16 @@
+@import url("collapsible.css");
+
+.juviz-sidepanel {
+  background: var(--jp-layout-color3);
+}
+
+.juviz-sidepanel-segment {
+  background: var(--jp-layout-color0);
+  padding: 10px;
+}
+
+.instance-list {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}

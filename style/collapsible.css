@@ -1,0 +1,33 @@
+.Collapsible {
+  display: flex;
+  flex-direction: column;
+}
+
+.Collapsible__trigger {
+  background: var(--jp-layout-color2);
+  font-weight: 400;
+  text-decoration: none;
+  position: relative;
+  border: 1px solid var(--jp-border-color2);
+  padding: 10px;
+}
+
+.Collapsible__trigger::after {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' viewBox='0 0 18 18' data-icon='ui-components:caret-down' data-icon-id='f5537fa8-1a9a-4a78-8ef2-89c5dc9c297d'%3E%3Cg class='jp-icon3' fill='%23616161' shape-rendering='geometricPrecision'%3E%3Cpath d='M5.2,7.5L9,11.2l3.8-3.8H5.2z'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: block;
+  transition: transform 300ms;
+  color: var(--jp-content-font-color2);
+}
+
+.Collapsible__trigger.is-open::after {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' viewBox='0 0 18 18' data-icon='ui-components:caret-up' data-icon-id='56e43b00-063a-408d-8271-54b7f13cb275'%3E%3Cg class='jp-icon3' fill='%23616161' shape-rendering='geometricPrecision'%3E%3Cpath d='M5.2,10.5L9,6.8l3.8,3.8H5.2z'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+}
+
+.Collapsible__contentInner {
+  padding: 10px;
+  border: 1px solid var(--jp-border-color2);
+  border-top: 0;
+}
