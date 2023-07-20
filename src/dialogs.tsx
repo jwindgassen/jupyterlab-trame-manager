@@ -1,8 +1,9 @@
 import { Dialog } from '@jupyterlab/apputils';
 import { Widget } from '@lumino/widgets';
 
-import { ParaViewOptions } from './paraview';
+import { ParaViewLaunchOptions } from './paraview';
 import { requestAPI } from './handler';
+
 
 function createLabel(forAttribute: string, textContent: string) {
   const label = document.createElement('label');
@@ -30,6 +31,8 @@ function createInput(id: string, type: string, value: string, attributes: [strin
   input.type = type;
   input.id = id;
   input.value = value;
+  
+  input.classList.add("form-input");
 
   for (const [option, value] of attributes) {
     input.setAttribute(option, value);
@@ -38,7 +41,8 @@ function createInput(id: string, type: string, value: string, attributes: [strin
   return input;
 }
 
-export class ParaViewLauncherDialog extends Widget implements Dialog.IBodyWidget<ParaViewOptions> {
+
+export class ParaViewLauncherDialog extends Widget implements Dialog.IBodyWidget<ParaViewLaunchOptions> {
   private readonly _accountElement: HTMLSelectElement;
   private readonly _partitionElement: HTMLSelectElement;
   private readonly _nodesElement: HTMLInputElement;
@@ -108,12 +112,12 @@ export class ParaViewLauncherDialog extends Widget implements Dialog.IBodyWidget
     }
   }
 
-  getValue(): ParaViewOptions {
+  getValue(): ParaViewLaunchOptions {
     return {
       account: this._accountElement.value,
       partition: this._partitionElement.value,
       nodes: Number(this._nodesElement.value),
-      runtime: this._timeElement.value,
+      timeLimit: this._timeElement.value,
     };
   }
 }

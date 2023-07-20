@@ -1,0 +1,54 @@
+#!/bin/bash
+#SBATCH --account={{ account }}
+#SBATCH --job-name="juviz-pvserver"
+#SBATCH --output=pvserver.out
+#SBATCH --error=pvserver.err
+#SBATCH --nodes={{ nodes }}
+#SBATCH --time={{ timeLimit }}
+
+# change this only with caution and with respect to "--displays="
+#SBATCH --partition={{ partition }}
+#SBATCH --ntasks-per-node=4
+#SBATCH --cpus-per-task=12
+#SBATCH --gres=gpu:4
+
+# load modules
+module load ParaView/5.10.1-EGL
+module load ParaViewPlugin-Nek5000/20221505-EGL
+export PV_PLUGIN_PATH=$PV_PLUGIN_PATH/lib64/paraview-5.10/plugins/pvNek5000Reader
+
+# choose MESA, if we have no GPU
+USE_NV=0
+echo "checking for GPU"
+lspci -k | grep -A 2 -i "NVIDIA" | grep "Kernel driver in use:" | grep "nvidia"
+if [ $? -ne 0 ]; then
+   echo "Using MESA"
+   export __EGL_VENDOR_LIBRARY_FILENAMES=$EBROOTOPENGL/share/glvnd/egl_vendor.d/50_mesa.json
+else
+   USE_NV=1
+   echo "Using NVIDIA"
+   nvidia-smi
+fi
+
+# print infos to stdout
+module list
+which pvserver
+eglinfo
+
+export OMP_NUM_THREADS=12
+export KNOB_MAX_WORKER_THREADS=12
+
+# more infos
+echo "CUDA_VISIBLE_DEVICES"
+srun bash -c 'echo $CUDA_VISIBLE_DEVICES'
+
+# ATTENTION: pvserver is responsible to distribute the 4 GPUs amoung its instances on a node !!!
+echo "pvserver:"
+srun --cpu_bind=verbose,rank pvserver --mpi --force-offscreen-rendering --displays='0,1,2,3' &
+SRUN_PID=$!
+
+if [ $USE_NV -eq 1 ]; then
+   sleep 10
+   nvidia-smi
+fi
+wait $SRUN_PID
