@@ -71,7 +71,7 @@ export class ParaViewSidepanelSegment extends React.Component<{}, { instaces: Pa
     console.log(options.value);
     
     await requestAPI<{}>('paraview', {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify(options.value)
     })
     await this.fetchData();

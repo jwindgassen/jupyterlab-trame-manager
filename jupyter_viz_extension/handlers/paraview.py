@@ -45,16 +45,16 @@ class ParaViewHandler(APIHandler):
     @authenticated
     async def get(self):
         servers = await _get_running_servers()
-        self.finish(json.dumps(servers))
+        await self.finish(json.dumps(servers))
         
     @authenticated
     async def post(self):
         try:
             await _launch_paraview(json.loads(self.request.body))
             self.set_status(200)
-            self.finish()
+            await self.finish()
             
         except Exception as e:
             print(e)
             self.set_status(400)
-            self.finish(str(e))
+            await self.finish(str(e))

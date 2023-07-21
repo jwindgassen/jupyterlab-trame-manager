@@ -1,13 +1,14 @@
 import asyncio
 
 
-async def run(programm: str, *args: list[str]):
+async def run(programm: str, *args: list[str], **kwargs):
     command = " ".join([programm, *args])
     
     proccess = await asyncio.create_subprocess_shell(
         command,
         stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
+        stderr=asyncio.subprocess.PIPE,
+        **kwargs
     )
 
     stdout, stderr = await proccess.communicate()
@@ -21,13 +22,14 @@ async def run(programm: str, *args: list[str]):
     return proccess.returncode
 
 
-async def output(programm: str, *args: list[str]):
+async def output(programm: str, *args: list[str], **kwargs):
     command = " ".join([programm, *args])
     
     proccess = await asyncio.create_subprocess_shell(
         command,
         stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.STDOUT
+        stderr=asyncio.subprocess.STDOUT,
+        **kwargs
     )
     
     stdout, _ = await proccess.communicate()

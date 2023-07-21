@@ -32,7 +32,7 @@ function createInput(id: string, type: string, value: string, attributes: [strin
   input.id = id;
   input.value = value;
   
-  input.classList.add("form-input");
+  input.classList.add('form-input');
 
   for (const [option, value] of attributes) {
     input.setAttribute(option, value);

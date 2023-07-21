@@ -9,6 +9,7 @@ import { requestAPI } from './handler';
 
 type TrameAppOptions = {
   name: string;
+  displayName: string;
   path: string;
   instances: string[];
 };
@@ -52,7 +53,9 @@ class TrameApp extends React.Component<{name: string, path: string}, {instances:
   }
     
   launchInstance = async () => {
-    const response = await requestAPI<{port: Number}>('trame', {
+    console.log('Launching trame app ' + this.props.name)
+
+    const response = await requestAPI<{port: number}>('trame', {
       method: 'POST',
       body: JSON.stringify({
         app_name: this.props.name
@@ -61,7 +64,7 @@ class TrameApp extends React.Component<{name: string, path: string}, {instances:
     
     const settings = ServerConnection.makeSettings();
     // Use JupyterServerproxy for now
-    const url = URLExt.join(settings.baseUrl, 'proxy', response.port.toString(), "index.html");
+    const url = URLExt.join(settings.baseUrl, 'proxy', response.port.toString(), 'index.html');
       
     this.setState({
       instances: [...this.state.instances, url]
@@ -124,7 +127,7 @@ export class TrameSidepanelSegment extends React.Component<Record<string, never>
         <div id="trame-instances" className="instance-list">
           {this.state.apps.map((app) => (
             <TrameApp
-              name={app.name}
+              name={app.displayName}
               path={app.path}
             />
           ))}

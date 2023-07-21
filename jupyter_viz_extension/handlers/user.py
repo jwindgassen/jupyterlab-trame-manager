@@ -23,7 +23,7 @@ class UserHandler(APIHandler):
             _get_partitions()
         )
         
-        self.finish({
+        await self.finish({
             "user": username,
             "accounts": accounts,
             "partitions": partitions
