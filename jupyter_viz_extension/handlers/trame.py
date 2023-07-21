@@ -22,7 +22,8 @@ def _next_open_port() -> int:
 
 def _discover_apps():
     # We use JUPYTER_PATH to discover Apps
-    paths = os.getenv("JUPYTER_PATH", [])
+    paths = os.getenv("JUPYTER_PATH")
+    paths = paths.split(os.pathsep) if paths else []
     print(f"Searching for trame apps in {paths!r}")
 
     for path in paths:
@@ -49,7 +50,7 @@ async def _launch_trame(app_name: str) -> int:
 
     # Prepare Environment
     env = os.environ.copy()
-    env["JUVIZ_PORT"] = str(port)
+    env["JUVIZ_ARGS"] = f"--port={port} --server"
 
     print(f"Starting {app_name} on port {port}")
     process = Popen(config["command"], shell=True, env=env, cwd=config.get("working_directory", None))
