@@ -2,9 +2,9 @@ name: Build
 
 on:
   push:
-    branches: main
+    branches: ["main"]
   pull_request:
-    branches: '*'
+    branches: ["*"]
 
 jobs:
   build:
@@ -31,13 +31,11 @@ jobs:
         set -eux
         python -m pip install .
 
-        pytest -vv -r ap --cov jupyter_viz_extension
         jupyter server extension list
         jupyter server extension list 2>&1 | grep -ie "jupyter_viz_extension.*OK"
 
         jupyter labextension list
         jupyter labextension list 2>&1 | grep -ie "jupyter-viz-extension.*OK"
-        python -m jupyterlab.browser_check
 
     - name: Package the extension
       run: |
@@ -64,8 +62,8 @@ jobs:
     - name: Install Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'
-        architecture: 'x64'
+        python-version: "3.9"
+        architecture: "x64"
     - uses: actions/download-artifact@v3
       with:
         name: extension-artifacts

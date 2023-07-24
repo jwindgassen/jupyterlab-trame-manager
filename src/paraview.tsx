@@ -41,7 +41,7 @@ class ParaViewInstance extends React.Component<ParaViewInstanceOptions> {
           <Info label='Project' value={this.props.account} />
           <Info label='Partition' value={this.props.partition} />
           <Info label='Nodes' value={this.props.nodes.toString()} />
-          <Info label='Port for Connection' value={this.props.url ?? ""} />
+          <Info label='Port for Connection' value={this.props.url ?? ''} />
         </Collapsible>
       </>
     );
@@ -49,7 +49,7 @@ class ParaViewInstance extends React.Component<ParaViewInstanceOptions> {
 }
 
 
-export class ParaViewSidepanelSegment extends React.Component<{}, { instaces: ParaViewInstanceOptions[] }> {
+export class ParaViewSidepanelSegment extends React.Component<Record<string, never>, { instaces: ParaViewInstanceOptions[] }> {
   constructor() {
     super({});
     this.state = { instaces: [] };
@@ -70,7 +70,7 @@ export class ParaViewSidepanelSegment extends React.Component<{}, { instaces: Pa
     });
     console.log(options.value);
     
-    await requestAPI<{}>('paraview', {
+    await requestAPI<Record<string, never>>('paraview', {
         method: 'POST',
         body: JSON.stringify(options.value)
     })

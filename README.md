@@ -1,6 +1,6 @@
 # jupyter_viz_extension
 
-[![Github Actions Status](https://github.com/github_username/jupyter-viz-extension/workflows/Build/badge.svg)](https://github.com/github_username/jupyter-viz-extension/actions/workflows/build.yml)
+[![Github Actions Status](https://github.com/jwindgassen/jupyter_viz_extension/workflows/Build/badge.svg)](https://github.com/jwindgassen/jupyter_viz_extension/actions/workflows/build.yml)
 A JupyterLab extension.
 
 This extension is composed of a Python package named `jupyter_viz_extension`
@@ -94,7 +94,3 @@ pip uninstall jupyter_viz_extension
 In development mode, you will also need to remove the symlink created by `jupyter labextension develop`
 command. To find its location, you can run `jupyter labextension list` to figure out where the `labextensions`
 folder is located. Then you can remove the symlink named `jupyter-viz-extension` within that folder.
-
-### Packaging the extension
-
-See [RELEASE](RELEASE.md)
