@@ -8,12 +8,12 @@ from .cmd import output
 async def _get_accounts():
     out = await output("jutil", "user", "projects", "--format='json'")
     return [group["unixgroup"] for group in json.loads(out)] if out else []
-    
+
 
 async def _get_partitions():
     return ["booster", "develbooster"]
-    
-    
+
+
 class UserHandler(APIHandler):
     @authenticated
     async def get(self):
@@ -22,7 +22,9 @@ class UserHandler(APIHandler):
             _get_accounts(),
             _get_partitions()
         )
-        
+
+        self.log.debug(f"User: {username!r} - Accounts: {accounts!r} - Partitions: {partitions!r}")
+
         await self.finish({
             "user": username,
             "accounts": accounts,

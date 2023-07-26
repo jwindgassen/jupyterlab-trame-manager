@@ -1,7 +1,7 @@
 import asyncio
 
 
-async def run(programm: str, *args: list[str], **kwargs):
+async def run(programm: str, *args: str, logger=None, **kwargs):
     command = " ".join([programm, *args])
     
     proccess = await asyncio.create_subprocess_shell(
@@ -13,16 +13,17 @@ async def run(programm: str, *args: list[str], **kwargs):
 
     stdout, stderr = await proccess.communicate()
 
-    print(f'{command!r} exited with {proccess.returncode}')
-    if stdout:
-        print(f'[stdout]\n{stdout.decode()}')
-    if stderr:
-        print(f'[stderr]\n{stderr.decode()}')
+    if logger:
+        logger.info(f"{command!r} exited with {proccess.returncode}")
+        if stdout:
+            logger.info(f"[stdout]\n{stdout.decode()}")
+        if stderr:
+            logger.info(f"[stderr]\n{stderr.decode()}")
     
     return proccess.returncode
 
 
-async def output(programm: str, *args: list[str], **kwargs):
+async def output(programm: str, *args: str, **kwargs):
     command = " ".join([programm, *args])
     
     proccess = await asyncio.create_subprocess_shell(
