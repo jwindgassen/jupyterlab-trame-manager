@@ -28,6 +28,9 @@ def _discover_apps():
 
     for path in paths:
         path = Path(path) / "trame"
+        if not path.exists():
+            continue
+
         for short_name in path.iterdir():
             # Open Config
             config_file = short_name / "app.yml"
