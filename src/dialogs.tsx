@@ -31,7 +31,7 @@ function createInput(id: string, type: string, value: string, attributes: [strin
   input.type = type;
   input.id = id;
   input.value = value;
-  
+
   input.classList.add('form-input');
 
   for (const [option, value] of attributes) {
@@ -95,7 +95,7 @@ export class ParaViewLauncherDialog extends Widget implements Dialog.IBodyWidget
       user: string,
       accounts: string[],
       partitions: string[]
-    }>('user')
+    }>('user');
 
     for (const account of data.accounts) {
       const optionElement = document.createElement('option');
@@ -110,7 +110,7 @@ export class ParaViewLauncherDialog extends Widget implements Dialog.IBodyWidget
       optionElement.textContent = partition;
       this._partitionElement.appendChild(optionElement);
     }
-  }
+  };
 
   getValue(): ParaViewLaunchOptions {
     return {

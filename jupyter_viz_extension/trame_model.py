@@ -45,7 +45,7 @@ class TrameApp:
             "name": self.name,
             "displayName": self.display_name,
             "path": self.path,
-            "instaces": [instance.dump() for instance in self.instances]
+            "instances": [instance.dump() for instance in self.instances]
         }
 
 

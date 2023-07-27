@@ -69,11 +69,11 @@ export class ParaViewSidepanelSegment extends React.Component<Record<string, nev
       body: new ParaViewLauncherDialog()
     });
     console.log(options.value);
-    
+
     await requestAPI<Record<string, never>>('paraview', {
-        method: 'POST',
-        body: JSON.stringify(options.value)
-    })
+      method: 'POST',
+      body: JSON.stringify(options.value)
+    });
     await this.fetchData();
   };
 
@@ -82,7 +82,7 @@ export class ParaViewSidepanelSegment extends React.Component<Record<string, nev
       <>
         <h3>
           Running ParaView backends:
-          <button className='launch-button' onClick={this.newInstance} >Launch</button>
+          <button className='launch-button' onClick={this.newInstance}>Launch</button>
         </h3>
         <div id='paraview-instances' className='instance-list'>
           {this.state.instaces.map((instance) => (

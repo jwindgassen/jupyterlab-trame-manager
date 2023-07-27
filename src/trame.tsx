@@ -1,6 +1,6 @@
 import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
-import { showErrorMessage } from '@jupyterlab/apputils'
+import { showErrorMessage } from '@jupyterlab/apputils';
 import * as React from 'react';
 import Collapsible from 'react-collapsible';
 import { Info } from './components';
@@ -27,7 +27,7 @@ class TrameAppInstance extends React.Component<TrameInstanceOptions> {
 
   openInstance = () => {
     const settings = ServerConnection.makeSettings();
-    const url = URLExt.join(settings.baseUrl, 'proxy', String(this.props.port), 'index.html')
+    const url = URLExt.join(settings.baseUrl, 'proxy', String(this.props.port), 'index.html');
     window.open(url, '_blank', 'noreferrer');
   };
 
@@ -35,27 +35,27 @@ class TrameAppInstance extends React.Component<TrameInstanceOptions> {
     return (
       <li>
         <div style={{ flexGrow: 1 }}>
-          <Info label="Port" value={`${this.props.port}`} />
-          <Info label="Log File" value={this.props.log} />
+          <Info label='Port' value={`${this.props.port}`} />
+          <Info label='Log File' value={this.props.log} />
         </div>
 
-        <button className="open-button" onClick={this.openInstance}>Open</button>
+        <button className='open-button' onClick={this.openInstance}>Open</button>
       </li>
     );
   }
 }
 
 
-class TrameApp extends React.Component<TrameAppOptions, {instances: TrameInstanceOptions[]}> {
+class TrameApp extends React.Component<TrameAppOptions, { instances: TrameInstanceOptions[] }> {
   constructor(props: TrameAppOptions) {
     super(props);
     this.state = {
-      instances: []
-    }
+      instances: this.props.instances  // Initialize with existing instances. ToDo: Improve?
+    };
   }
-    
+
   launchInstance = async () => {
-    console.log('Launching trame app ' + this.props.name)
+    console.log('Launching trame app ' + this.props.name);
 
     const instance = await requestAPI<TrameInstanceOptions>('trame', {
       method: 'POST',
@@ -63,13 +63,12 @@ class TrameApp extends React.Component<TrameAppOptions, {instances: TrameInstanc
         app_name: this.props.name
       })
     });
-      
+
     this.setState({
       instances: [...this.state.instances, instance]
     });
-    
     await showErrorMessage('Success', `Launched new trame instance on port ${instance.port}`);
-  }
+  };
 
   render() {
     const title = (
@@ -82,13 +81,13 @@ class TrameApp extends React.Component<TrameAppOptions, {instances: TrameInstanc
     return (
       <>
         <Collapsible trigger={title}>
-          <Info label="Path" value={this.props.path} />
-          
+          <Info label='Path' value={this.props.path} />
+
           <h4>
             Instances:
-            <button className="launch-button" onClick={this.launchInstance} >Launch</button>
+            <button className='launch-button' onClick={this.launchInstance}>Launch</button>
           </h4>
-          <div className="instance-list">
+          <div className='instance-list'>
             {this.state.instances.map(instance => (
               <TrameAppInstance {...instance} />
             ))}
@@ -117,7 +116,7 @@ export class TrameSidepanelSegment extends React.Component<Record<string, never>
     return (
       <>
         <h3>trame Apps:</h3>
-        <div id="trame-instances" className="instance-list">
+        <div id='trame-instances' className='instance-list'>
           {this.state.apps.map((app) => (
             <TrameApp {...app} />
           ))}
