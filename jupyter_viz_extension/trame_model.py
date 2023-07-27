@@ -27,7 +27,7 @@ class TrameAppInstance:
     def dump(self) -> dict:
         return {
             "port": self.port,
-            "logDir": self.log_dir,
+            "log": self.log_dir,
         }
 
 
@@ -101,7 +101,7 @@ class TrameModel(SingletonConfigurable):
             working_directory=config.get("working_directory", None),
         )
 
-    async def launch_trame(self, app_name: str) -> int:
+    async def launch_trame(self, app_name: str) -> TrameAppInstance:
         config = self._apps[app_name]
 
         # Determine Parameters
@@ -123,7 +123,7 @@ class TrameModel(SingletonConfigurable):
 
         # Add Instance
         self._apps[app_name].instances.append(
-            TrameAppInstance(port, log_dir, logger, process)
+            instance := TrameAppInstance(port, log_dir, logger, process)
         )
 
-        return port
+        return instance

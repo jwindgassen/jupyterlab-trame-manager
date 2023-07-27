@@ -18,9 +18,9 @@ class TrameHandler(APIHandler):
         self.log.info(f"Launching new trame instance {app_name!r}")
 
         try:
-            port = await TrameModel.instance(self.log).launch_trame(app_name)
+            instance = await TrameModel.instance(self.log).launch_trame(app_name)
             self.set_status(200)
-            await self.finish({"port": port})
+            await self.finish(instance.dump())
             
         except Exception as e:
             self.log.error(str(e))

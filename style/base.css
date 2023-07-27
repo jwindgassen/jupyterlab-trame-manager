@@ -16,13 +16,38 @@
   row-gap: 10px;
 }
 
+.instance-list li {
+  border: var(--jp-layout-color4) solid 2px;
+  padding: 5px;
+  display: flex;
+  flex-direction: row;
+}
+
 .launch-button {
   background: green;
   color: white;
   border: 0 solid green;
   float: right;
+  padding: 4px 8px;
 }
 
 .form-input {
   margin-bottom: 12px;
+}
+
+.open-button {
+  width: 30%;
+  border: 0;
+  padding: 0;
+  background: var(--jp-layout-color2);
+  flex-shrink: 0;
+}
+
+.open-button:hover {
+  background-color: var(--jp-layout-color3);
+}
+
+.open-button:active {
+  color: white;
+  background-color: var(--jp-layout-color4);
 }

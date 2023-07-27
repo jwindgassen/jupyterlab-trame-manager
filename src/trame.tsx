@@ -11,13 +11,12 @@ type TrameAppOptions = {
   name: string;
   displayName: string;
   path: string;
-  instances: string[];
+  instances: TrameInstanceOptions[];
 };
 
 type TrameInstanceOptions = {
-  name: string;
-  path: string;
-  url: string;
+  port: number;
+  log: string;
 };
 
 
@@ -27,25 +26,28 @@ class TrameAppInstance extends React.Component<TrameInstanceOptions> {
   }
 
   openInstance = () => {
-    window.open(this.props.url, '_blank', 'noreferrer');
+    const settings = ServerConnection.makeSettings();
+    const url = URLExt.join(settings.baseUrl, 'proxy', String(this.props.port), 'index.html')
+    window.open(url, '_blank', 'noreferrer');
   };
 
   render() {
     return (
-      <div>
-        <Collapsible trigger="State: Running">
-          <Info label="Connected To Backend" value={this.props.url} />
-          <Info label="Root Directory" value={this.props.path} />
-        </Collapsible>
-        <button onClick={this.openInstance}>Open</button>
-      </div>
+      <li>
+        <div style={{ flexGrow: 1 }}>
+          <Info label="Port" value={`${this.props.port}`} />
+          <Info label="Log File" value={this.props.log} />
+        </div>
+
+        <button className="open-button" onClick={this.openInstance}>Open</button>
+      </li>
     );
   }
 }
 
 
-class TrameApp extends React.Component<{name: string, path: string}, {instances: string[]}> {
-  constructor(props: {name: string, path: string}) {
+class TrameApp extends React.Component<TrameAppOptions, {instances: TrameInstanceOptions[]}> {
+  constructor(props: TrameAppOptions) {
     super(props);
     this.state = {
       instances: []
@@ -55,22 +57,18 @@ class TrameApp extends React.Component<{name: string, path: string}, {instances:
   launchInstance = async () => {
     console.log('Launching trame app ' + this.props.name)
 
-    const response = await requestAPI<{port: number}>('trame', {
+    const instance = await requestAPI<TrameInstanceOptions>('trame', {
       method: 'POST',
       body: JSON.stringify({
         app_name: this.props.name
       })
     });
-    
-    const settings = ServerConnection.makeSettings();
-    // Use JupyterServerproxy for now
-    const url = URLExt.join(settings.baseUrl, 'proxy', response.port.toString(), 'index.html');
       
     this.setState({
-      instances: [...this.state.instances, url]
+      instances: [...this.state.instances, instance]
     });
     
-    await showErrorMessage('Success', `Launched new trame instance on port ${response.port}`);
+    await showErrorMessage('Success', `Launched new trame instance on port ${instance.port}`);
   }
 
   render() {
@@ -91,12 +89,8 @@ class TrameApp extends React.Component<{name: string, path: string}, {instances:
             <button className="launch-button" onClick={this.launchInstance} >Launch</button>
           </h4>
           <div className="instance-list">
-            {this.state.instances.map((url) => (
-              <TrameAppInstance
-                name={this.props.name}
-                path={this.props.path}
-                url={url}
-              />
+            {this.state.instances.map(instance => (
+              <TrameAppInstance {...instance} />
             ))}
           </div>
         </Collapsible>
@@ -106,8 +100,7 @@ class TrameApp extends React.Component<{name: string, path: string}, {instances:
 }
 
 
-export class TrameSidepanelSegment extends React.Component<Record<string, never>,
-  { apps: TrameAppOptions[] }> {
+export class TrameSidepanelSegment extends React.Component<Record<string, never>, { apps: TrameAppOptions[] }> {
   constructor() {
     super({});
     this.state = { apps: [] };
@@ -126,10 +119,7 @@ export class TrameSidepanelSegment extends React.Component<Record<string, never>
         <h3>trame Apps:</h3>
         <div id="trame-instances" className="instance-list">
           {this.state.apps.map((app) => (
-            <TrameApp
-              name={app.displayName}
-              path={app.path}
-            />
+            <TrameApp {...app} />
           ))}
         </div>
       </>
