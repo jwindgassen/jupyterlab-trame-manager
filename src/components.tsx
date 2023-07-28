@@ -1,5 +1,11 @@
 import * as React from 'react';
 
+export type Empty = Record<any, never>
+
+export type InstanceList<T> = {
+  instances: T[];
+}
+
 export class Info extends React.Component<{ label: string; value: string }> {
   render() {
     return (

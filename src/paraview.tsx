@@ -1,10 +1,10 @@
 import * as React from 'react';
 import Collapsible from 'react-collapsible';
-import { showDialog } from '@jupyterlab/apputils';
+import { showDialog, showErrorMessage } from '@jupyterlab/apputils';
 
 import { requestAPI } from './handler';
 import { ParaViewLauncherDialog } from './dialogs';
-import { Info } from './components';
+import { Info, Empty, InstanceList } from './components';
 
 
 export type ParaViewLaunchOptions = {
@@ -14,11 +14,16 @@ export type ParaViewLaunchOptions = {
   timeLimit: string;
 };
 
-export type ParaViewInstanceOptions = ParaViewLaunchOptions & {
+type ParaViewInstanceOptions = ParaViewLaunchOptions & {
   state: string;
   timeUsed: string;
   url?: string;
 };
+
+type ParaViewReturnStatus = {
+  returnCode: number;
+  message: string;
+}
 
 
 class ParaViewInstance extends React.Component<ParaViewInstanceOptions> {
@@ -49,17 +54,19 @@ class ParaViewInstance extends React.Component<ParaViewInstanceOptions> {
 }
 
 
-export class ParaViewSidepanelSegment extends React.Component<Record<string, never>, { instaces: ParaViewInstanceOptions[] }> {
+export class ParaViewSidepanelSegment extends React.Component<Empty, InstanceList<ParaViewInstanceOptions>> {
   constructor() {
     super({});
-    this.state = { instaces: [] };
+    this.state = { instances: [] };
+  }
 
-    this.fetchData();
+  async componentDidMount() {
+    await this.fetchData()
   }
 
   fetchData = async () => {
     this.setState({
-      instaces: await requestAPI<ParaViewInstanceOptions[]>('paraview')
+      instances: await requestAPI<ParaViewInstanceOptions[]>('paraview')
     });
   };
 
@@ -70,11 +77,15 @@ export class ParaViewSidepanelSegment extends React.Component<Record<string, nev
     });
     console.log(options.value);
 
-    await requestAPI<Record<string, never>>('paraview', {
+    const status = await requestAPI<ParaViewReturnStatus>('paraview', {
       method: 'POST',
       body: JSON.stringify(options.value)
     });
-    await this.fetchData();
+
+    await Promise.all([
+      showErrorMessage(status.returnCode === 0 ? 'Success' : 'Error', status.message),
+      this.fetchData(),
+    ])
   };
 
   render() {
@@ -85,7 +96,7 @@ export class ParaViewSidepanelSegment extends React.Component<Record<string, nev
           <button className='launch-button' onClick={this.newInstance}>Launch</button>
         </h3>
         <div id='paraview-instances' className='instance-list'>
-          {this.state.instaces.map((instance) => (
+          {this.state.instances.map((instance) => (
             <ParaViewInstance {...instance} />
           ))}
         </div>

@@ -3,7 +3,8 @@ import { ServerConnection } from '@jupyterlab/services';
 import { showErrorMessage } from '@jupyterlab/apputils';
 import * as React from 'react';
 import Collapsible from 'react-collapsible';
-import { Info } from './components';
+
+import { Info, Empty, InstanceList } from './components';
 import { requestAPI } from './handler';
 
 
@@ -46,7 +47,7 @@ class TrameAppInstance extends React.Component<TrameInstanceOptions> {
 }
 
 
-class TrameApp extends React.Component<TrameAppOptions, { instances: TrameInstanceOptions[] }> {
+class TrameApp extends React.Component<TrameAppOptions, InstanceList<TrameInstanceOptions>> {
   constructor(props: TrameAppOptions) {
     super(props);
     this.state = {
@@ -99,16 +100,19 @@ class TrameApp extends React.Component<TrameAppOptions, { instances: TrameInstan
 }
 
 
-export class TrameSidepanelSegment extends React.Component<Record<string, never>, { apps: TrameAppOptions[] }> {
+export class TrameSidepanelSegment extends React.Component<Empty, InstanceList<TrameAppOptions>> {
   constructor() {
     super({});
-    this.state = { apps: [] };
-    this.fetchData();
+    this.state = { instances: [] };
+  }
+
+  async componentDidMount() {
+    await this.fetchData();
   }
 
   fetchData = async () => {
     this.setState({
-      apps: await requestAPI<TrameAppOptions[]>('trame')
+      instances: await requestAPI<TrameAppOptions[]>('trame')
     });
   };
 
@@ -117,7 +121,7 @@ export class TrameSidepanelSegment extends React.Component<Record<string, never>
       <>
         <h3>trame Apps:</h3>
         <div id='trame-instances' className='instance-list'>
-          {this.state.apps.map((app) => (
+          {this.state.instances.map((app) => (
             <TrameApp {...app} />
           ))}
         </div>

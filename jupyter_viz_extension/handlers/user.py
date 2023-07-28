@@ -6,7 +6,7 @@ from .cmd import output
 
 
 async def _get_accounts():
-    out = await output("jutil", "user", "projects", "--format='json'")
+    _, out = await output("jutil", "user", "projects", "--format='json'")
     return [group["unixgroup"] for group in json.loads(out)] if out else []
 
 

@@ -4,12 +4,13 @@ from tempfile import NamedTemporaryFile
 from jinja2 import Template
 from jupyter_server.base.handlers import APIHandler
 from tornado.web import authenticated
-from .cmd import run, output
+
+from .cmd import output
 
 
 class ParaViewHandler(APIHandler):
     async def get_running_servers(self):
-        out = await output("squeue", "--me", "--noheader", "--Format='Partition,Account,NumNodes,TimeUsed,TimeLimit,State,NodeList'")
+        _, out = await output("squeue", "--me", "--noheader", "--Format='Partition,Account,NumNodes,TimeUsed,TimeLimit,State,NodeList'")
 
         servers = []
         for server in out.splitlines():
@@ -39,7 +40,7 @@ class ParaViewHandler(APIHandler):
             tmp.write(template.render(options))
 
         self.log.info(f"Job script in {path!r}")
-        await run("sbatch", path, logger=self.log)
+        return await output("sbatch", path, logger=self.log)
 
     @authenticated
     async def get(self):
@@ -49,9 +50,9 @@ class ParaViewHandler(APIHandler):
     @authenticated
     async def post(self):
         try:
-            await self.launch_paraview(json.loads(self.request.body))
+            return_code, message = await self.launch_paraview(json.loads(self.request.body))
             self.set_status(200)
-            await self.finish()
+            await self.finish({"returnCode": return_code, "message": message})
             
         except Exception as e:
             self.log.error(str(e))
