@@ -1,5 +1,8 @@
+from jupyter_server.serverapp import ServerApp
+
 from ._version import __version__
 from .handlers import setup_handlers
+from .model import Model
 
 
 def _jupyter_labextension_paths():
@@ -15,8 +18,10 @@ def _jupyter_server_extension_points():
     }]
 
 
-def _load_jupyter_server_extension(server_app):
-    setup_handlers(server_app.web_app)
+def _load_jupyter_server_extension(server_app: ServerApp):
+    model = Model(server_app.log, server_app.web_app.settings.get("base_url", "/"))
+    setup_handlers(server_app.web_app, model)
+
     name = "jupyter_viz_extension"
     server_app.log.info(f"Registered {name} server extension")
 

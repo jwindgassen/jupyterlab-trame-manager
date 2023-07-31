@@ -1,11 +1,11 @@
 import { URLExt } from '@jupyterlab/coreutils';
-import { ServerConnection } from '@jupyterlab/services';
-import { showErrorMessage } from '@jupyterlab/apputils';
+import { showDialog, showErrorMessage } from '@jupyterlab/apputils';
 import * as React from 'react';
 import Collapsible from 'react-collapsible';
 
 import { Info, Empty, InstanceList } from './components';
 import { requestAPI } from './handler';
+import { TrameLauncherDialog } from './dialogs';
 
 
 type TrameAppOptions = {
@@ -15,8 +15,14 @@ type TrameAppOptions = {
   instances: TrameInstanceOptions[];
 };
 
-type TrameInstanceOptions = {
+export type TrameLaunchOptions = {
+  name: string;
+  dataDirectory: string;
+}
+
+type TrameInstanceOptions = TrameLaunchOptions & {
   port: number;
+  base_url: string;
   log: string;
 };
 
@@ -27,17 +33,24 @@ class TrameAppInstance extends React.Component<TrameInstanceOptions> {
   }
 
   openInstance = () => {
-    const settings = ServerConnection.makeSettings();
-    const url = URLExt.join(settings.baseUrl, 'proxy', String(this.props.port), 'index.html');
+    const url = URLExt.join(this.props.base_url, 'index.html');
     window.open(url, '_blank', 'noreferrer');
   };
 
   render() {
+    const title = <>
+      <b>{this.props.name}</b>
+    </>
+
     return (
       <li>
         <div style={{ flexGrow: 1 }}>
-          <Info label='Port' value={`${this.props.port}`} />
-          <Info label='Log File' value={this.props.log} />
+          <Collapsible trigger={title} >
+            <Info label='Data Directory' value={`${this.props.dataDirectory}`} />
+            <Info label='Port' value={`${this.props.port}`} />
+            <Info label='Base URL' value={`${this.props.base_url}`} />
+            <Info label='Log File' value={this.props.log} />
+          </Collapsible>
         </div>
 
         <button className='open-button' onClick={this.openInstance}>Open</button>
@@ -56,12 +69,17 @@ class TrameApp extends React.Component<TrameAppOptions, InstanceList<TrameInstan
   }
 
   launchInstance = async () => {
-    console.log('Launching trame app ' + this.props.name);
+    const options = await showDialog({
+      title: 'Launch a new ParaView instance',
+      body: new TrameLauncherDialog(this.props.displayName, this.state.instances.length)
+    });
+    console.log('Launching trame app:', options.value);
 
     const instance = await requestAPI<TrameInstanceOptions>('trame', {
       method: 'POST',
       body: JSON.stringify({
-        app_name: this.props.name
+        appName: this.props.name,
+        ...options.value
       })
     });
 
@@ -74,7 +92,7 @@ class TrameApp extends React.Component<TrameAppOptions, InstanceList<TrameInstan
   render() {
     const title = (
       <div>
-        <b> {this.props.name} </b><br />
+        <b> {this.props.displayName} </b><br />
         Running Instances: {this.state.instances.length}
       </div>
     );
@@ -84,10 +102,10 @@ class TrameApp extends React.Component<TrameAppOptions, InstanceList<TrameInstan
         <Collapsible trigger={title}>
           <Info label='Path' value={this.props.path} />
 
-          <h4>
-            Instances:
+          <div style={{ height: '40px', margin: '10px 0 0 0' }}>
             <button className='launch-button' onClick={this.launchInstance}>Launch</button>
-          </h4>
+          </div>
+
           <div className='instance-list'>
             {this.state.instances.map(instance => (
               <TrameAppInstance {...instance} />

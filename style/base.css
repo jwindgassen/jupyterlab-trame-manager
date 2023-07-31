@@ -17,7 +17,7 @@
 }
 
 .instance-list li {
-  border: var(--jp-layout-color4) solid 2px;
+  /* border: var(--jp-layout-color4) solid 2px; */
   padding: 5px;
   display: flex;
   flex-direction: row;

@@ -8,6 +8,7 @@ import { Info, Empty, InstanceList } from './components';
 
 
 export type ParaViewLaunchOptions = {
+  name: string;
   account: string;
   partition: string;
   nodes: number;
@@ -17,7 +18,6 @@ export type ParaViewLaunchOptions = {
 type ParaViewInstanceOptions = ParaViewLaunchOptions & {
   state: string;
   timeUsed: string;
-  url?: string;
 };
 
 type ParaViewReturnStatus = {
@@ -34,6 +34,7 @@ class ParaViewInstance extends React.Component<ParaViewInstanceOptions> {
   render() {
     const label = (
       <>
+        <b>{this.props.name}</b>
         <Info label='Nodes' value={this.props.nodes.toString()} />
         <Info label='Status' value={this.props.state} />
         <Info label='Time' value={`${this.props.timeUsed} / ${this.props.timeLimit}`} />
@@ -46,7 +47,6 @@ class ParaViewInstance extends React.Component<ParaViewInstanceOptions> {
           <Info label='Project' value={this.props.account} />
           <Info label='Partition' value={this.props.partition} />
           <Info label='Nodes' value={this.props.nodes.toString()} />
-          <Info label='Port for Connection' value={this.props.url ?? ''} />
         </Collapsible>
       </>
     );

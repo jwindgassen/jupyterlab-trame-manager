@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account={{ account }}
-#SBATCH --job-name="juviz-pvserver"
+#SBATCH --job-name={{ name }}
 #SBATCH --output=pvserver.out
 #SBATCH --error=pvserver.err
 #SBATCH --nodes={{ nodes }}

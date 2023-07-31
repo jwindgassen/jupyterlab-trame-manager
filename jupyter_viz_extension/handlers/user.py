@@ -1,8 +1,9 @@
 import json
+import os
 import asyncio
 from jupyter_server.base.handlers import APIHandler
 from tornado.web import authenticated
-from .cmd import output
+from ..cmd import output
 
 
 async def _get_accounts():
@@ -27,6 +28,7 @@ class UserHandler(APIHandler):
 
         await self.finish({
             "user": username,
+            "home": os.path.expanduser("~"),
             "accounts": accounts,
             "partitions": partitions
         })
