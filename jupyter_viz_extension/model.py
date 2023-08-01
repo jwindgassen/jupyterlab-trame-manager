@@ -218,7 +218,7 @@ class Model:
     async def launch_paraview(self, options):
         self._log.info(f"Launching ParaView with Options {options!r}")
 
-        input_file = Path(__file__).parent / ".." / "share" / "launch_paraview.in"
+        input_file = Path(__file__).parent / "share" / "launch_paraview.in"
         template = Template(input_file.read_text())
 
         # Create a tempfile and write the SLURM Config into it
