@@ -1,11 +1,12 @@
 import { URLExt } from '@jupyterlab/coreutils';
-import { showDialog, showErrorMessage } from '@jupyterlab/apputils';
+import { showDialog, showErrorMessage, InputDialog } from '@jupyterlab/apputils';
 import * as React from 'react';
 import Collapsible from 'react-collapsible';
 
 import { Info, Empty, InstanceList } from './components';
 import { requestAPI } from './handler';
 import { TrameLauncherDialog } from './dialogs';
+import { ParaViewInstanceOptions } from './paraview';
 
 
 type TrameAppOptions = {
@@ -26,10 +27,18 @@ type TrameInstanceOptions = TrameLaunchOptions & {
   log: string;
 };
 
+type TrameInstanceProps = TrameInstanceOptions & {
+  appName: string;
+}
 
-class TrameAppInstance extends React.Component<TrameInstanceOptions> {
-  constructor(props: TrameInstanceOptions) {
+type TrameInstanceState = {
+  connection?: [string, string];
+}
+
+class TrameAppInstance extends React.Component<TrameInstanceProps, TrameInstanceState> {
+  constructor(props: TrameInstanceProps) {
     super(props);
+    this.state = { connection: undefined }
   }
 
   openInstance = () => {
@@ -37,10 +46,58 @@ class TrameAppInstance extends React.Component<TrameInstanceOptions> {
     window.open(url, '_blank', 'noreferrer');
   };
 
+  connect = async () => {
+    const servers = await requestAPI<ParaViewInstanceOptions[]>('paraview')
+    
+    const serverName = await InputDialog.getItem({
+      title: 'Select ParaView Server to connect to',
+      items: servers.map(s => s.name),
+      current: 0,
+      editable: false,
+    })
+    
+    if (!serverName.value || serverName.value.length === 0 ) { return; }
+    console.log(`Connecting instance '${this.props.name}' to Server '${serverName.value}'`)
+
+    const response = await requestAPI<{ url: string }>(URLExt.join('trame', 'connect'), {
+      method: 'POST',
+      body: JSON.stringify({
+        appName: this.props.appName,
+        instanceName: this.props.name,
+        serverName: serverName.value,
+      })
+    })
+
+    this.setState({ connection: [serverName.value, response.url] })
+  }
+
+  disconnect = async () => {
+    await requestAPI(URLExt.join('trame', 'disconnect'), {
+      method: 'POST',
+      body: JSON.stringify({
+        appName: this.props.appName,
+        instanceName: this.props.name,
+      })
+    })
+
+    this.setState({ connection: undefined })
+  }
+
   render() {
     const title = <>
       <b>{this.props.name}</b>
     </>
+
+    const connectButton = this.state.connection ?
+      <div style={{ marginTop: '10px' }}>
+        Connected to ParaView Server&nbsp;
+        <span style={{ fontWeight: 'bold' }}>{this.state.connection[0]}</span>
+        &nbsp;on&nbsp;
+        <span style={{ fontWeight: 'bold' }}>{this.state.connection[1]}:11111</span>
+
+        <button className="disconnect-button" onClick={this.disconnect}>Disconnect</button>
+      </div> :
+      <button className="connect-button" onClick={this.connect}>Connect</button>
 
     return (
       <li>
@@ -50,6 +107,7 @@ class TrameAppInstance extends React.Component<TrameInstanceOptions> {
             <Info label='Port' value={`${this.props.port}`} />
             <Info label='Base URL' value={`${this.props.base_url}`} />
             <Info label='Log File' value={this.props.log} />
+            {connectButton}
           </Collapsible>
         </div>
 
@@ -108,7 +166,7 @@ class TrameApp extends React.Component<TrameAppOptions, InstanceList<TrameInstan
 
           <div className='instance-list'>
             {this.state.instances.map(instance => (
-              <TrameAppInstance {...instance} />
+              <TrameAppInstance {...instance} appName={this.props.name} />
             ))}
           </div>
         </Collapsible>

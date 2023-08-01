@@ -1,3 +1,5 @@
+import asyncio
+import json
 import logging
 import os
 from dataclasses import dataclass, field
@@ -8,6 +10,7 @@ from pathlib import Path
 from socket import socket
 from subprocess import Popen
 from tempfile import mkstemp, NamedTemporaryFile
+from tornado.httpclient import AsyncHTTPClient
 from yaml import safe_load
 
 from .cmd import output
@@ -48,7 +51,7 @@ class ParaViewServer:
 @dataclass(kw_only=True)
 class TrameAppInstance:
     name: str
-    data_directory: str = field()
+    data_directory: str
     port: int
     base_url: str
     log_dir: str
@@ -96,7 +99,7 @@ class Model:
         self._base_url = base_url
 
         self.discover_apps()
-        self.get_running_servers()
+        asyncio.run(self.get_running_servers())
 
     ########################################################
     #
@@ -192,7 +195,7 @@ class Model:
         return self._servers
 
     async def get_running_servers(self):
-        _, out =  await output("squeue", "--me", "--noheader", "--Format='Name,Account,Partition,NumNodes,TimeUsed,TimeLimit,State,NodeList'")
+        _, out = await output("squeue", "--me", "--noheader", "--Format='Name,Account,Partition,NumNodes,TimeUsed,TimeLimit,State,NodeList'")
 
         self._servers = []
         for server in out.splitlines():
@@ -225,3 +228,34 @@ class Model:
 
         self._log.info(f"Job script in {path!r}")
         return await output("sbatch", path, logger=self._log)
+
+    ########################################################
+    #
+    #   Connections
+    #
+    ########################################################
+
+    async def connect_to_backend(self, app_name: str, instance_name: str, server_name):
+        instance = [app for app in self.apps[app_name].instances if app.name == instance_name][0]
+        server = [server for server in self.servers if server.name == server_name][0]
+
+        juviz_url = url_path_join(f"http://localhost:{instance.port}",  "juviz")  # ToDo: Also use JSP?
+        self._log.info(f"JuViz Endpoint: {juviz_url!r}")
+
+        client = AsyncHTTPClient()
+        await client.fetch(juviz_url, method="POST", body=json.dumps({
+            "action": "connect",
+            "url": server.connection_address,
+            "port": 11111,
+        }))
+
+        return dict(url=server.connection_address)
+
+    async def disconnect(self, app_name, instance_name):
+        instance = [app for app in self.apps[app_name].instances if app.name == instance_name][0]
+        juviz_url = url_path_join(f"http://localhost:{instance.port}",  "juviz")
+
+        client = AsyncHTTPClient()
+        await client.fetch(juviz_url, method="POST", body=json.dumps({
+            "action": "disconnect",
+        }))

@@ -15,7 +15,7 @@ export type ParaViewLaunchOptions = {
   timeLimit: string;
 };
 
-type ParaViewInstanceOptions = ParaViewLaunchOptions & {
+export type ParaViewInstanceOptions = ParaViewLaunchOptions & {
   state: string;
   timeUsed: string;
 };

@@ -17,7 +17,6 @@
 }
 
 .instance-list li {
-  /* border: var(--jp-layout-color4) solid 2px; */
   padding: 5px;
   display: flex;
   flex-direction: row;
@@ -39,6 +38,7 @@
   width: 30%;
   border: 0;
   padding: 0;
+  margin: 0 5px;
   background: var(--jp-layout-color2);
   flex-shrink: 0;
 }
@@ -50,4 +50,25 @@
 .open-button:active {
   color: white;
   background-color: var(--jp-layout-color4);
+}
+
+.connect-button {
+  width: calc(100% - 20px);
+  height: 20px;
+  border: 0;
+  padding: 0;
+  margin: 10px 10px 0;
+  background: green;
+  color: white;
+}
+
+
+.disconnect-button {
+  width: calc(100% - 20px);
+  height: 20px;
+  border: 0;
+  padding: 0;
+  margin: 10px 10px 0;
+  background: var(--jp-layout-color4);
+  color: white;
 }

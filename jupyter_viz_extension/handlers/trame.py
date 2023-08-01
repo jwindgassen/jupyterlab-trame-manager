@@ -38,3 +38,31 @@ class TrameHandler(APIHandler):
             self.log.error(str(e))
             self.set_status(400)
             await self.finish(str(e))
+
+
+class TrameActionHandler(APIHandler):
+    _model: Model
+
+    def initialize(self, model):
+        self._model = model
+
+    @authenticated
+    async def post(self, action: str):
+        try:
+            app_name = self.get_json_body()["appName"]
+            instance_name = self.get_json_body()["instanceName"]
+
+            response = None
+            if action == "connect":
+                server_name = self.get_json_body()["serverName"]
+                response = await self._model.connect_to_backend(app_name, instance_name, server_name)
+            elif action == "disconnect":
+                await self._model.disconnect(app_name, instance_name)
+
+            self.set_status(200)
+            await self.finish(response)
+
+        except Exception as e:
+            self.log.error(str(e))
+            self.set_status(400)
+            await self.finish(str(e))
