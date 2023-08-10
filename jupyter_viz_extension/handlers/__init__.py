@@ -12,5 +12,5 @@ def setup_handlers(web_app: ServerWebApplication, model):
         (url_path_join(base_url, "paraview"),        ParaViewHandler,    dict(model=model)),
         (url_path_join(base_url, "trame"),           TrameHandler,       dict(model=model)),
         (url_path_join(base_url, "trame", r"(\w+)"), TrameActionHandler, dict(model=model)),
-        (url_path_join(base_url, "user"),            UserHandler),
+        (url_path_join(base_url, "user"),            UserHandler,        dict(model=model)),
     ])
