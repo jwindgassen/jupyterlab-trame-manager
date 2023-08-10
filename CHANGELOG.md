@@ -9,7 +9,9 @@
 
 <!-- <END NEW CHANGELOG ENTRY> -->
 
-# Connection between trame and ParaView
+## 0.3.0
+
+- Connection between trame and ParaView
 
 ## 0.2.4
 
