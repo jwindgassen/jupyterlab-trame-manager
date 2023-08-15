@@ -6,8 +6,8 @@ import { ReactWidget } from '@jupyterlab/apputils';
 import { SplitPanel } from '@lumino/widgets';
 import React from 'react';
 
-import { ParaViewSidepanelSegment } from './paraview';
-import { TrameSidepanelSegment } from './trame';
+import ParaViewSidepanelSegment from './paraview';
+import TrameSidepanelSegment from './trame';
 
 const plugin: JupyterFrontEndPlugin<void> = {
   id: 'juviz-extension',
@@ -17,7 +17,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     panel.orientation = 'vertical';
     panel.id = 'juviz-sidepanel';
     panel.title.iconClass = 'jp-ExtensionIcon jp-SideBar-tabIcon';
-    panel.title.caption = 'JuWiz';
+    panel.title.caption = 'JuViz';
 
     // ParaView Segment
     const paraViewSegment = ReactWidget.create(<ParaViewSidepanelSegment />);

@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import Collapsible from 'react-collapsible';
 import { showDialog, showErrorMessage } from '@jupyterlab/apputils';
 
-import { requestAPI } from './handler';
+import { requestAPI, useAPI } from './handler';
 import { ParaViewLauncherDialog } from './dialogs';
-import { Info, Empty, InstanceList } from './components';
+import { Info } from './components';
 
 
 export type ParaViewLaunchOptions = {
@@ -26,51 +26,46 @@ type ParaViewReturnStatus = {
 }
 
 
-class ParaViewInstance extends React.Component<ParaViewInstanceOptions> {
-  constructor(props: ParaViewInstanceOptions) {
-    super(props);
-  }
+const RefreshTimeout = 30 * 1000  // 30 Seconds
+const ParaViewContext = createContext<ParaViewInstanceOptions[]>([])
 
-  render() {
-    const label = (
-      <>
-        <b>{this.props.name}</b>
-        <Info label='Nodes' value={this.props.nodes.toString()} />
-        <Info label='Status' value={this.props.state} />
-        <Info label='Time' value={`${this.props.timeUsed} / ${this.props.timeLimit}`} />
-      </>
-    );
 
-    return (
-      <>
-        <Collapsible trigger={label}>
-          <Info label='Project' value={this.props.account} />
-          <Info label='Partition' value={this.props.partition} />
-          <Info label='Nodes' value={this.props.nodes.toString()} />
-        </Collapsible>
-      </>
-    );
-  }
+function ParaViewInstance({ index }: { index: number }) {
+  const {  name, account, nodes, partition, state, timeLimit, timeUsed } = useContext(ParaViewContext)[index]
+
+  const label = (
+    <>
+      <b>{name}</b>
+      <Info label='Nodes' value={nodes.toString()} />
+      <Info label='Status' value={state} />
+      <Info label='Time' value={`${timeUsed} / ${timeLimit}`} />
+    </>
+  );
+
+  return (
+    <>
+      <Collapsible trigger={label}>
+        <Info label='Project' value={account} />
+        <Info label='Partition' value={partition} />
+        <Info label='Nodes' value={nodes.toString()} />
+      </Collapsible>
+    </>
+  );
 }
 
 
-export class ParaViewSidepanelSegment extends React.Component<Empty, InstanceList<ParaViewInstanceOptions>> {
-  constructor() {
-    super({});
-    this.state = { instances: [] };
-  }
+export default function ParaViewSidepanelSegment() {
+  const [instances, refresh] = useAPI<ParaViewInstanceOptions[]>('paraview');
 
-  async componentDidMount() {
-    await this.fetchData()
-  }
+  useEffect(
+    () => {
+      const handle = setInterval(refresh, RefreshTimeout)
+      return () => clearInterval(handle)
+    },
+    [instances]
+  )
 
-  fetchData = async () => {
-    this.setState({
-      instances: await requestAPI<ParaViewInstanceOptions[]>('paraview')
-    });
-  };
-
-  newInstance = async () => {
+  async function newInstance() {
     const options = await showDialog({
       title: 'Launch a new ParaView instance',
       body: new ParaViewLauncherDialog()
@@ -82,25 +77,25 @@ export class ParaViewSidepanelSegment extends React.Component<Empty, InstanceLis
       body: JSON.stringify(options.value)
     });
 
-    await Promise.all([
-      showErrorMessage(status.returnCode === 0 ? 'Success' : 'Error', status.message),
-      this.fetchData(),
-    ])
-  };
-
-  render() {
-    return (
-      <>
-        <h3>
-          Running ParaView backends:
-          <button className='launch-button' onClick={this.newInstance}>Launch</button>
-        </h3>
-        <div id='paraview-instances' className='instance-list'>
-          {this.state.instances.map((instance) => (
-            <ParaViewInstance {...instance} />
-          ))}
-        </div>
-      </>
-    );
+    await showErrorMessage(status.returnCode === 0 ? 'Success' : 'Error', status.message);
   }
+
+
+  return (
+    <>
+      <h3>
+        Running ParaView backends:
+        <button className='launch-button' onClick={newInstance}>Launch</button>
+      </h3>
+      <div id='paraview-instances' className='instance-list'>
+        <ParaViewContext.Provider value={instances ?? []}>
+          {
+            instances?.map((_, idx) =>
+              <ParaViewInstance index={idx} />
+            )
+          }
+        </ParaViewContext.Provider>
+      </div>
+    </>
+  );
 }

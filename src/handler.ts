@@ -1,5 +1,7 @@
 import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
+import { useState, useEffect } from 'react';
+
 
 /**
  * Call the API extension
@@ -38,4 +40,19 @@ export async function requestAPI<T>(endPoint: string, init: RequestInit = {}): P
   }
 
   return data;
+}
+
+
+export function useAPI<T>(endPoint: string, init: RequestInit = {}): [T | null, () => void] {
+  const [data, setData] = useState<T | null>(null);
+
+  const fetchData = () => {
+    requestAPI<T>(endPoint, init)
+      .then(data => setData(data))
+      .catch(error => console.error(error))
+  }
+
+  useEffect(fetchData, [endPoint, init]);
+
+  return [data, fetchData];
 }
