@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --account={{ account }}
-#SBATCH --job-name={{ name }}
-#SBATCH --output=pvserver.out
-#SBATCH --error=pvserver.err
+#SBATCH --job-name="{{ name }}"
+#SBATCH --output={{ stdout }}
+#SBATCH --error={{ stderr }}
 #SBATCH --nodes={{ nodes }}
 #SBATCH --time={{ timeLimit }}
 
@@ -24,12 +24,13 @@ USE_NV=0
 echo "checking for GPU"
 lspci -k | grep -A 2 -i "NVIDIA" | grep "Kernel driver in use:" | grep "nvidia"
 if [ $? -ne 0 ]; then
-   echo "Using MESA"
-   export __EGL_VENDOR_LIBRARY_FILENAMES=$EBROOTOPENGL/share/glvnd/egl_vendor.d/50_mesa.json
+    echo "Using MESA"
+    export __EGL_VENDOR_LIBRARY_FILENAMES=$EBROOTOPENGL/share/glvnd/egl_vendor.d/50_mesa.json
 else
    USE_NV=1
-   echo "Using NVIDIA"
-   nvidia-smi
+    echo "Using NVIDIA"
+    export __EGL_VENDOR_LIBRARY_FILENAMES=$EBROOTOPENGL/share/glvnd/egl_vendor.d/10_nvidia.json
+    nvidia-smi
 fi
 
 # Some infos
@@ -46,7 +47,7 @@ srun --cpu_bind=verbose,rank pvserver --mpi --force-offscreen-rendering --multi-
 SRUN_PID=$!
 
 if [ $USE_NV -eq 1 ]; then
-   sleep 10
-   nvidia-smi
+    sleep 10
+    nvidia-smi
 fi
 wait $SRUN_PID

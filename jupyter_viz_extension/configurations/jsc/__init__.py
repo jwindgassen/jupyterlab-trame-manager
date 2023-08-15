@@ -3,7 +3,7 @@ import os
 from json import loads
 from jinja2 import Template
 from pathlib import Path
-from tempfile import NamedTemporaryFile
+from tempfile import mkdtemp
 
 from .. import Configuration
 from ...cmd import output
@@ -44,23 +44,29 @@ class JscConfiguration(Configuration):
 
         return servers
 
-    async def launch_paraview(self, options) -> tuple[int, str]:
+    async def launch_paraview(self, options: dict) -> tuple[int, str]:
         self.log.info(f"Launching ParaView with Options {options!r}")
 
         # Get the input file, depending on the selected partition
-        if options.partition in ("booster", "develbooster"):
+        if options["partition"] in ("booster", "develbooster"):
             input_file = Path(__file__).parent / "paraview_juwelsbooster.in"
         else:
-            raise ValueError(f"Unkown Partition: {options.partition}")
+            raise ValueError(f"Unkown Partition: {options['partition']}")
 
-        # Create a tempfile and write the SLURM Config into it
+        # Create a tempfile and write the SLURM Config and log files into it
+        temp_dir = Path(os.getenv("SCRATCH"), "juviz-jobs")
+        temp_dir.mkdir(parents=True, exist_ok=True)
+
+        job_dir = Path(mkdtemp(prefix=os.getenv("USER"), dir=temp_dir))
+        options["stdout"] = (job_dir / "stdout").resolve()
+        options["stderr"] = (job_dir / "stderr").resolve()
+
         template = Template(input_file.read_text())
-        with NamedTemporaryFile("w", delete=False) as tmp:
-            path = tmp.name
-            tmp.write(template.render(options))
+        with open(job_path := (job_dir / "paraview.job").resolve(), "w") as job_file:
+            job_file.write(template.render(options))
 
-        self.log.info(f"Job script in {path!r}")
-        return await output("sbatch", path, logger=self.log)
+        self.log.info(f"Job files can be found in {str(job_dir)!r}")
+        return await output("sbatch", str(job_path), logger=self.log)
 
     async def get_user_data(self) -> UserData:
         username, accounts, partitions = await asyncio.gather(

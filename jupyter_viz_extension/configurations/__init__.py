@@ -101,7 +101,7 @@ class Configuration(ABC):
         pass
 
     @abstractmethod
-    async def launch_paraview(self, options) -> tuple[int, str]:
+    async def launch_paraview(self, options: dict) -> tuple[int, str]:
         pass
 
     @abstractmethod
