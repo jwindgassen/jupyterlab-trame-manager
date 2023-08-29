@@ -30,7 +30,7 @@ class TrameHandler(APIHandler):
                 self.log.error(f"Data Directory {data_directory!r} does not exist, defaulting to User's Home directory")
                 data_directory = os.path.expanduser("~")
 
-            instance = await self._model.launch_trame(app_name, name, data_directory)
+            instance = await self._model.launch_trame(app_name, name=name, data_directory=data_directory)
             self.set_status(200)
             await self.finish(instance.dump())
             

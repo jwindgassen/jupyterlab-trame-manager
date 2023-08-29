@@ -34,13 +34,20 @@ class ParaViewServer:
 
 @dataclass(kw_only=True)
 class TrameAppInstance:
+    # User defined
     name: str
     data_directory: str
+
+    # Generated
+    uuid: str
     port: int
     base_url: str
     log_dir: str
+    auth_key: str
+    auth_key_file: str
+
     logger: FileIO
-    process_handle: Popen
+    process_handle: Popen | None
 
     def dump(self) -> dict:
         return {

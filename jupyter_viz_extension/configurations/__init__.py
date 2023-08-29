@@ -1,14 +1,16 @@
 import os
 from abc import ABC, abstractmethod
 from io import FileIO
-from jupyter_server.utils import url_path_join
+from jupyter_server.serverapp import ServerApp
 from pathlib import Path
+from secrets import token_urlsafe, token_hex
 from socket import socket
 from subprocess import Popen
 from tempfile import mkstemp
 from yaml import safe_load
 
 from ..types import *
+from ..proxy import make_trame_proxy_handler
 
 
 class Configuration(ABC):
@@ -64,35 +66,69 @@ class Configuration(ABC):
             working_directory=config.get("working_directory", None),
         )
 
-    async def launch_trame(self, app: TrameApp, name: str, data_directoy: str, base_url: str) -> TrameAppInstance:
-        # Determine Parameters
+    def generate_trame_parameters(self, app: TrameApp) -> dict:
+        # UUID
+        uuid = token_hex(8)
+
+        # Port
         port = self.get_open_port()
+
+        # Log-file
         _, log_dir = mkstemp(suffix=".log", text=True)
         logger = FileIO(log_dir, "w")
 
-        self.log.info(f"Starting {app.name} on port {port}, logging to {log_dir}")
+        # authKey
+        auth_key = token_urlsafe(32)
 
-        # Prepare Environment
+        # Write authKey to tempfile
+        tempfile, auth_key_file = mkstemp(text=True)
+        with open(tempfile, "w") as file:
+            file.write(auth_key)
+
+        self.log.info(f"{uuid=}, {port=}, {log_dir=}, {auth_key_file=}")
+        return {
+            "uuid": uuid,
+            "port": port,
+            "log_dir": log_dir,
+            "logger": logger,
+            "auth_key": auth_key,
+            "auth_key_file": auth_key_file,
+        }
+
+    def generate_trame_env(self, instance: TrameAppInstance) -> dict:
         env = os.environ.copy()
-        env["JUVIZ_ARGS"] = f"--port={port} --data={data_directoy} --server"
+        env["JUVIZ_ARGS"] = (f"--port={instance.port} "
+                             f"--data={instance.data_directory} "
+                             f"--authKeyFile={instance.auth_key_file} "
+                             f"--server")
+        return env
+
+    def route_trame(self, instance: TrameAppInstance, server_app: ServerApp) -> str:
+        base_url, rule = make_trame_proxy_handler(instance, server_app.base_url)
+        server_app.web_app.add_handlers('.*', [rule])
+        return base_url
+
+    async def launch_trame(self, app: TrameApp, server_app, **options) -> TrameAppInstance:
+        parameters = self.generate_trame_parameters(app)
+        self.log.info(f"Starting {app.name}")
+
+        instance = TrameAppInstance(
+            **options,
+            **parameters,
+            process_handle=None,
+            base_url="",
+        )
+
+        # env and handler
+        env = self.generate_trame_env(instance)
+        instance.base_url = self.route_trame(instance, server_app)
 
         # Create Process
         process = Popen(
             app.command, env=env, cwd=app.working_directory,
-            shell=True, stdout=logger, stderr=logger, text=True
+            shell=True, stdout=instance.logger, stderr=instance.logger, text=True
         )
-
-        # Add Instance
-        base_url = url_path_join(base_url, "proxy", str(port), "/")  # JupyterServerProxy
-        instance = TrameAppInstance(
-            name=name,
-            data_directory=data_directoy,
-            port=port,
-            base_url=base_url,
-            log_dir=log_dir,
-            logger=logger,
-            process_handle=process
-        )
+        instance.process_handle = process
 
         return instance
 

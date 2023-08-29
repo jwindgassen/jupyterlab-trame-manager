@@ -62,7 +62,7 @@ export default function ParaViewSidepanelSegment() {
       const handle = setInterval(refresh, RefreshTimeout)
       return () => clearInterval(handle)
     },
-    [instances]
+    []
   )
 
   async function newInstance() {

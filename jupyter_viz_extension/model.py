@@ -3,6 +3,7 @@ import json
 import logging
 import os
 from importlib import import_module
+from jupyter_server.serverapp import ServerApp
 from jupyter_server.utils import url_path_join
 from socket import socket
 from tornado.httpclient import AsyncHTTPClient
@@ -23,13 +24,12 @@ class Model:
     _apps: dict[str, TrameApp]
     _servers: list[ParaViewServer]
 
-    def __init__(self, logger: logging.Logger, base_url: str):
+    def __init__(self, server_app: ServerApp):
         super().__init__()
 
         self._apps = dict()
         self._servers = []
-        self._log = logger
-        self._base_url = base_url
+        self._server_app = server_app
 
         # Get Configuration
         conf_name = os.getenv("JUVIZ_CONFIGURATION")
@@ -48,6 +48,10 @@ class Model:
         # Discover Apps and Servers
         self.discover_apps()
         asyncio.run(self.get_running_servers())
+
+    @property
+    def _log(self) -> logging.Logger:
+        return self._server_app.log
 
     async def get_user_data(self) -> UserData:
         return await self._configuration.get_user_data()
@@ -72,10 +76,10 @@ class Model:
 
         self._apps = dict(zip(app_names, apps))
 
-    async def launch_trame(self, app_name: str, name: str, data_directoy: str) -> TrameAppInstance:
+    async def launch_trame(self, app_name: str, **options) -> TrameAppInstance:
         app = self.apps[app_name]
 
-        instance = await self._configuration.launch_trame(app, name, data_directoy, self._base_url)
+        instance = await self._configuration.launch_trame(app, self._server_app, **options)
         app.instances.append(instance)
 
         return instance

@@ -43,8 +43,7 @@ function TrameAppInstance({ appName, appIndex, instanceIndex }: TrameInstancePro
   const [connection, setConnection] = useState<[string, string] | null>(null)
 
   function openInstance() {
-    const url = URLExt.join(base_url, 'index.html');
-    window.open(url, '_blank', 'noreferrer');
+    window.open(base_url, '_blank', 'noreferrer');
   }
 
   async function connect() {
@@ -177,7 +176,7 @@ export default function TrameSidepanelSegment() {
       const handle = setInterval(refresh, RefreshTimeout)
       return () => clearInterval(handle)
     },
-    [instances]
+    []
   )
 
   return (
