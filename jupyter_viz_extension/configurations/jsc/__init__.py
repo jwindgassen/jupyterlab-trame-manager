@@ -3,6 +3,7 @@ import os
 from json import loads
 from jinja2 import Template
 from pathlib import Path
+from re import findall
 from tempfile import mkdtemp
 
 from .. import Configuration
@@ -22,12 +23,15 @@ async def _get_partitions():
 class JscConfiguration(Configuration):
     async def get_running_servers(self) -> list[ParaViewServer]:
         _, out = await output("squeue", "--me",
-                              "--noheader", "--Format='Name,Account,Partition,NumNodes,TimeUsed,TimeLimit,State,NodeList'")
+                              "--noheader", "--Format='Name:;,Account:;,Partition:;,NumNodes:;,TimeUsed:;,TimeLimit:;,State:;,NodeList'")
 
         servers = []
         for server in out.splitlines():
             self.log.info(f"Found Server: {server}")
-            name, partition, account, nodes, time_used, time_limit, state, *node_list = server.split()
+            name, partition, account, nodes, time_used, time_limit, state, node_list = server.split(";")
+
+            root_node = findall(r"jwb\[?(\d{4})", node_list)[0]
+            self.log.info(f"Root Node: {root_node}")
 
             server = ParaViewServer(
                 name=name,
@@ -38,7 +42,7 @@ class JscConfiguration(Configuration):
                 time_limit=time_limit,
                 state=state,
                 node_list=node_list,
-                connection_address=f"jwb{node_list[4:8]}i.juwels" if state == "RUNNING" else None
+                connection_address=f"jwb{root_node}i.juwels" if state == "RUNNING" else None
             )
             servers.append(server)
 
