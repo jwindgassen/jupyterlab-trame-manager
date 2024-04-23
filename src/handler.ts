@@ -44,6 +44,13 @@ export async function requestAPI<T>(
   return data;
 }
 
+/**
+ * React hook for using an API Endpoint
+ *
+ * @param endPoint API REST end point for the extension
+ * @param init Initial values for the request
+ * @returns The response body interpreted as JSON
+ */
 export function useAPI<T>(
   endPoint: string,
   init: RequestInit = {}

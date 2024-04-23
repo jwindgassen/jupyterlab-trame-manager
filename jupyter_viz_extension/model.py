@@ -20,6 +20,15 @@ def _next_open_port() -> int:
 
 
 class Model:
+    """
+    Model/Controller that keeps track of all running instances and allows to launch new instances. Most of the actual
+    logic is implemented in a "Configuration", which allows for users to create different code for their specific
+    platforms and HPC infrastructure. Configuration is selected at runtime using the "JUVIZ_CONFIGURATION" environment
+    variable. The Model will forward most calls to this Configuration.
+
+    @see: jupyter_viz_extension.configurations.Configuration
+    """
+
     _configuration: Configuration
     _apps: dict[str, TrameApp]
     _servers: list[ParaViewServer]
@@ -74,6 +83,7 @@ class Model:
         apps = self._configuration.discover_apps()
         app_names = [app.name for app in apps]
 
+        self._log.debug(f"Discovered apps: {', '.join(app_names)}")
         self._apps = dict(zip(app_names, apps))
 
     async def launch_trame(self, app_name: str, **options) -> TrameAppInstance:
