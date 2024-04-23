@@ -1,5 +1,9 @@
 import { URLExt } from '@jupyterlab/coreutils';
-import { showDialog, showErrorMessage, InputDialog } from '@jupyterlab/apputils';
+import {
+  showDialog,
+  showErrorMessage,
+  InputDialog
+} from '@jupyterlab/apputils';
 import React, { useState, createContext, useContext, useEffect } from 'react';
 import Collapsible from 'react-collapsible';
 
@@ -8,7 +12,6 @@ import { requestAPI, useAPI } from './handler';
 import { TrameLauncherDialog } from './dialogs';
 import { ParaViewInstanceOptions } from './paraview';
 
-
 type TrameAppOptions = {
   name: string;
   displayName: string;
@@ -16,31 +19,36 @@ type TrameAppOptions = {
   instances: TrameInstanceOptions[];
 };
 
-export type TrameLaunchOptions = {
+type TrameInstanceOptions = {
   name: string;
   dataDirectory: string;
-}
-
-type TrameInstanceOptions = TrameLaunchOptions & {
   port: number;
   base_url: string;
   log: string;
 };
 
+export type TrameLaunchOptions = Pick<
+  TrameInstanceOptions,
+  'name' | 'dataDirectory'
+>;
+
 type TrameInstanceProps = {
   appName: string;
   appIndex: number;
-  instanceIndex: number
-}
+  instanceIndex: number;
+};
 
+const RefreshTimeout = 30 * 1000; // 30 Seconds
+const TrameContext = createContext<TrameAppOptions[]>([]);
 
-const RefreshTimeout = 30 * 1000  // 30 Seconds
-const TrameContext = createContext<TrameAppOptions[]>([])
-
-
-function TrameAppInstance({ appName, appIndex, instanceIndex }: TrameInstanceProps) {
-  const { base_url, dataDirectory, log, name, port } = useContext(TrameContext)[appIndex].instances[instanceIndex]
-  const [connection, setConnection] = useState<[string, string] | null>(null)
+function TrameAppInstance({
+  appName,
+  appIndex,
+  instanceIndex
+}: TrameInstanceProps) {
+  const { base_url, dataDirectory, log, name, port } =
+    useContext(TrameContext)[appIndex].instances[instanceIndex];
+  const [connection, setConnection] = useState<[string, string] | null>(null);
 
   function openInstance() {
     window.open(base_url, '_blank', 'noreferrer');
@@ -59,16 +67,21 @@ function TrameAppInstance({ appName, appIndex, instanceIndex }: TrameInstancePro
     if (!serverName.value || serverName.value.length === 0) {
       return;
     }
-    console.log(`Connecting instance '${name}' to Server '${serverName.value}'`);
+    console.log(
+      `Connecting instance '${name}' to Server '${serverName.value}'`
+    );
 
-    const response = await requestAPI<{ url: string }>(URLExt.join('trame', 'connect'), {
-      method: 'POST',
-      body: JSON.stringify({
-        appName: appName,
-        instanceName: name,
-        serverName: serverName.value
-      })
-    });
+    const response = await requestAPI<{ url: string }>(
+      URLExt.join('trame', 'connect'),
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          appName: appName,
+          instanceName: name,
+          serverName: serverName.value
+        })
+      }
+    );
 
     setConnection([serverName.value, response.url]);
   }
@@ -78,49 +91,57 @@ function TrameAppInstance({ appName, appIndex, instanceIndex }: TrameInstancePro
       method: 'POST',
       body: JSON.stringify({
         appName: appName,
-        instanceName: name,
+        instanceName: name
       })
-    })
+    });
 
     setConnection(null);
   }
 
+  const title = (
+    <>
+      <b>{name}</b>
+    </>
+  );
 
-  const title = <>
-    <b>{name}</b>
-  </>
-
-  const connectButton = connection ?
+  const connectButton = connection ? (
     <div style={{ marginTop: '10px' }}>
       Connected to ParaView Server&nbsp;
       <span style={{ fontWeight: 'bold' }}>{connection[0]}</span>
       &nbsp;on&nbsp;
       <span style={{ fontWeight: 'bold' }}>{connection[1]}:11111</span>
-
-      <button className="disconnect-button" onClick={disconnect}>Disconnect</button>
-    </div> :
-    <button className="connect-button" onClick={connect}>Connect</button>
+      <button className="disconnect-button" onClick={disconnect}>
+        Disconnect
+      </button>
+    </div>
+  ) : (
+    <button className="connect-button" onClick={connect}>
+      Connect
+    </button>
+  );
 
   return (
     <li>
       <div style={{ flexGrow: 1 }}>
-        <Collapsible trigger={title} >
-          <Info label='Data Directory' value={`${dataDirectory}`} />
-          <Info label='Port' value={`${port}`} />
-          <Info label='Base URL' value={`${base_url}`} />
-          <Info label='Log File' value={log} />
+        <Collapsible trigger={title}>
+          <Info label="Data Directory" value={`${dataDirectory}`} />
+          <Info label="Port" value={`${port}`} />
+          <Info label="Base URL" value={`${base_url}`} />
+          <Info label="Log File" value={log} />
           {connectButton}
         </Collapsible>
       </div>
 
-      <button className='open-button' onClick={openInstance}>Open</button>
+      <button className="open-button" onClick={openInstance}>
+        Open
+      </button>
     </li>
   );
 }
 
-
 function TrameApp({ index }: { index: number }) {
-  const { displayName, name, path, instances } = useContext(TrameContext)[index]
+  const { displayName, name, path, instances } =
+    useContext(TrameContext)[index];
 
   async function launchInstance() {
     const options = await showDialog({
@@ -137,13 +158,16 @@ function TrameApp({ index }: { index: number }) {
       })
     });
 
-    await showErrorMessage('Success', `Launched new trame instance on port ${instance.port}`);
+    await showErrorMessage(
+      'Success',
+      `Launched new trame instance on port ${instance.port}`
+    );
   }
-
 
   const title = (
     <div>
-      <b> {displayName} </b><br />
+      <b> {displayName} </b>
+      <br />
       Running Instances: {instances.length}
     </div>
   );
@@ -151,15 +175,21 @@ function TrameApp({ index }: { index: number }) {
   return (
     <>
       <Collapsible trigger={title}>
-        <Info label='Path' value={path} />
+        <Info label="Path" value={path} />
 
         <div style={{ height: '40px', margin: '10px 0 0 0' }}>
-          <button className='launch-button' onClick={launchInstance}>Launch</button>
+          <button className="launch-button" onClick={launchInstance}>
+            Launch
+          </button>
         </div>
 
-        <div className='instance-list'>
+        <div className="instance-list">
           {instances.map((_, idx) => (
-            <TrameAppInstance appName={name} appIndex={index} instanceIndex={idx} />
+            <TrameAppInstance
+              appName={name}
+              appIndex={index}
+              instanceIndex={idx}
+            />
           ))}
         </div>
       </Collapsible>
@@ -167,28 +197,22 @@ function TrameApp({ index }: { index: number }) {
   );
 }
 
-
 export default function TrameSidepanelSegment() {
-  const [instances, refresh] = useAPI<TrameAppOptions[]>('trame')
+  const [instances, refresh] = useAPI<TrameAppOptions[]>('trame');
 
-  useEffect(
-    () => {
-      const handle = setInterval(refresh, RefreshTimeout)
-      return () => clearInterval(handle)
-    },
-    []
-  )
+  useEffect(() => {
+    const handle = setInterval(refresh, RefreshTimeout);
+    return () => clearInterval(handle);
+  }, []);
 
   return (
     <>
       <h3>trame Apps:</h3>
-      <div id='trame-instances' className='instance-list'>
+      <div id="trame-instances" className="instance-list">
         <TrameContext.Provider value={instances ?? []}>
-          {
-            instances?.map((_, idx) =>
-              <TrameApp index={idx} />
-            )
-          }
+          {instances?.map((_, idx) => (
+            <TrameApp index={idx} />
+          ))}
         </TrameContext.Provider>
       </div>
     </>

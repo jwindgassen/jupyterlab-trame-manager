@@ -2,17 +2,15 @@ import { Dialog } from '@jupyterlab/apputils';
 import { Widget } from '@lumino/widgets';
 
 import { ParaViewLaunchOptions } from './paraview';
-import { TrameLaunchOptions } from './trame'
+import { TrameLaunchOptions } from './trame';
 import { requestAPI } from './handler';
 
-
 type UserData = {
-  user: string,
-  home: string,
-  accounts: string[],
-  partitions: string[]
-}
-
+  user: string;
+  home: string;
+  accounts: string[];
+  partitions: string[];
+};
 
 function createLabel(forAttribute: string, textContent: string) {
   const label = document.createElement('label');
@@ -35,7 +33,12 @@ function createSelect(id: string, options: string[]) {
   return select;
 }
 
-function createInput(id: string, type: string, value: string, attributes: [string, string][] = []) {
+function createInput(
+  id: string,
+  type: string,
+  value: string,
+  attributes: [string, string][] = []
+) {
   const input = document.createElement('input');
   input.type = type;
   input.id = id;
@@ -50,8 +53,10 @@ function createInput(id: string, type: string, value: string, attributes: [strin
   return input;
 }
 
-
-export class ParaViewLauncherDialog extends Widget implements Dialog.IBodyWidget<ParaViewLaunchOptions> {
+export class ParaViewLauncherDialog
+  extends Widget
+  implements Dialog.IBodyWidget<ParaViewLaunchOptions>
+{
   private readonly _nameElement: HTMLInputElement;
   private readonly _accountElement: HTMLSelectElement;
   private readonly _partitionElement: HTMLSelectElement;
@@ -64,44 +69,44 @@ export class ParaViewLauncherDialog extends Widget implements Dialog.IBodyWidget
     // Name form
     const nameForm = document.createElement('div');
     nameForm.appendChild(createLabel('name', 'Name: '));
-    nameForm.appendChild(this._nameElement =
-      createInput('name', 'text', 'ParaView Server')
+    nameForm.appendChild(
+      (this._nameElement = createInput('name', 'text', 'ParaView Server'))
     );
     this.node.appendChild(nameForm);
 
     // Account form
     const accountForm = document.createElement('div');
     accountForm.appendChild(createLabel('account', 'Account: '));
-    accountForm.appendChild(this._accountElement =
-      createSelect('account', [])
+    accountForm.appendChild(
+      (this._accountElement = createSelect('account', []))
     );
     this.node.appendChild(accountForm);
 
     // Partition form
     const partitionForm = document.createElement('div');
     partitionForm.appendChild(createLabel('partition', 'Partition: '));
-    partitionForm.appendChild(this._partitionElement =
-      createSelect('partition', [])
+    partitionForm.appendChild(
+      (this._partitionElement = createSelect('partition', []))
     );
     this.node.appendChild(partitionForm);
 
     // Nodes form
     const nodesForm = document.createElement('div');
     nodesForm.appendChild(createLabel('nodes', 'Nodes: '));
-    nodesForm.appendChild(this._nodesElement =
-      createInput('nodes', 'number', '4', [
+    nodesForm.appendChild(
+      (this._nodesElement = createInput('nodes', 'number', '4', [
         ['min', '1'],
         ['max', '32'],
-        ['step', '1'],
-      ])
+        ['step', '1']
+      ]))
     );
     this.node.appendChild(nodesForm);
 
     // Time form
     const timeForm = document.createElement('div');
     timeForm.appendChild(createLabel('time', 'Time: '));
-    timeForm.appendChild(this._timeElement =
-      createInput('time', 'text', '02:00:00')
+    timeForm.appendChild(
+      (this._timeElement = createInput('time', 'text', '02:00:00'))
     );
     this.node.appendChild(timeForm);
 
@@ -132,13 +137,15 @@ export class ParaViewLauncherDialog extends Widget implements Dialog.IBodyWidget
       account: this._accountElement.value,
       partition: this._partitionElement.value,
       nodes: Number(this._nodesElement.value),
-      timeLimit: this._timeElement.value,
+      timeLimit: this._timeElement.value
     };
   }
 }
 
-
-export class TrameLauncherDialog extends Widget implements Dialog.IBodyWidget<TrameLaunchOptions> {
+export class TrameLauncherDialog
+  extends Widget
+  implements Dialog.IBodyWidget<TrameLaunchOptions>
+{
   private readonly _nameElement: HTMLInputElement;
   private readonly _dataDirElement: HTMLInputElement;
 
@@ -148,16 +155,20 @@ export class TrameLauncherDialog extends Widget implements Dialog.IBodyWidget<Tr
     // Name form
     const nameForm = document.createElement('div');
     nameForm.appendChild(createLabel('name', 'Name: '));
-    nameForm.appendChild(this._nameElement =
-      createInput('name', 'text', `${appName} Instance ${instances + 1}`)
+    nameForm.appendChild(
+      (this._nameElement = createInput(
+        'name',
+        'text',
+        `${appName} Instance ${instances + 1}`
+      ))
     );
     this.node.appendChild(nameForm);
 
     // Data Directory form
     const dataDirForm = document.createElement('div');
     dataDirForm.appendChild(createLabel('dataDir', 'Data Directory: '));
-    dataDirForm.appendChild(this._dataDirElement =
-      createInput('dataDir', 'text', '')
+    dataDirForm.appendChild(
+      (this._dataDirElement = createInput('dataDir', 'text', ''))
     );
     this.node.appendChild(dataDirForm);
 
@@ -166,13 +177,13 @@ export class TrameLauncherDialog extends Widget implements Dialog.IBodyWidget<Tr
 
   fetchUserData = async () => {
     const data = await requestAPI<UserData>('user');
-    this._dataDirElement.value = data.home
+    this._dataDirElement.value = data.home;
   };
 
   getValue(): TrameLaunchOptions {
     return {
       name: this._nameElement.value,
-      dataDirectory: this._dataDirElement.value,
+      dataDirectory: this._dataDirElement.value
     };
   }
 }

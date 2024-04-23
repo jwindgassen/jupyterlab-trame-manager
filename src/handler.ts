@@ -2,7 +2,6 @@ import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
 import { useState, useEffect } from 'react';
 
-
 /**
  * Call the API extension
  *
@@ -10,7 +9,10 @@ import { useState, useEffect } from 'react';
  * @param init Initial values for the request
  * @returns The response body interpreted as JSON
  */
-export async function requestAPI<T>(endPoint: string, init: RequestInit = {}): Promise<T> {
+export async function requestAPI<T>(
+  endPoint: string,
+  init: RequestInit = {}
+): Promise<T> {
   const settings = ServerConnection.makeSettings();
   const requestUrl = URLExt.join(
     settings.baseUrl,
@@ -42,15 +44,17 @@ export async function requestAPI<T>(endPoint: string, init: RequestInit = {}): P
   return data;
 }
 
-
-export function useAPI<T>(endPoint: string, init: RequestInit = {}): [T | null, () => void] {
+export function useAPI<T>(
+  endPoint: string,
+  init: RequestInit = {}
+): [T | null, () => void] {
   const [data, setData] = useState<T | null>(null);
 
   const fetchData = () => {
     requestAPI<T>(endPoint, init)
       .then(data => setData(data))
-      .catch(error => console.error(error))
-  }
+      .catch(error => console.error(error));
+  };
 
   useEffect(fetchData, [endPoint, init]);
 

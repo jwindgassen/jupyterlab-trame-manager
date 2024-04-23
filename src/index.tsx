@@ -1,6 +1,6 @@
 import {
   JupyterFrontEnd,
-  JupyterFrontEndPlugin,
+  JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 import { ReactWidget } from '@jupyterlab/apputils';
 import { SplitPanel } from '@lumino/widgets';
@@ -30,7 +30,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     panel.addWidget(trameSegment);
 
     app.shell.add(panel, 'left');
-  },
+  }
 };
 
 export default plugin;

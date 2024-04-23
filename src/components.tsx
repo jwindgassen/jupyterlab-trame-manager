@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-
 export function Info(props: { label: string; value: string }) {
   return (
     <div>
