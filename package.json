@@ -57,7 +57,7 @@
   "dependencies": {
     "@jupyterlab/application": "^3.1.0",
     "@jupyterlab/coreutils": "^5.1.0",
-    "@jupyterlab/services": "7.1.0-beta.2",
+    "@jupyterlab/services": "^6.1.0",
     "@jupyterlab/settingregistry": "^3.1.0",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
