@@ -10,12 +10,15 @@ import React from 'react';
 import ParaViewSidepanelSegment from './paraview';
 import TrameSidepanelSegment from './trame';
 import { trameIcon } from './icons';
+import { commandRegistryInstance } from './components';
 
 const plugin: JupyterFrontEndPlugin<void> = {
   id: 'juviz-extension',
   autoStart: true,
   requires: [ILayoutRestorer],
   activate: (app: JupyterFrontEnd, restorer: ILayoutRestorer | null) => {
+    commandRegistryInstance.instance = app.commands;
+
     const panel = new SplitPanel();
     panel.orientation = 'vertical';
     panel.id = 'juviz-sidepanel';

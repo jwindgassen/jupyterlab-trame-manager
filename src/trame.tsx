@@ -7,7 +7,7 @@ import {
 import React, { useState, createContext, useContext, useEffect } from 'react';
 import Collapsible from 'react-collapsible';
 
-import { Info } from './components';
+import { Info, Path } from './components';
 import { requestAPI, useAPI } from './handler';
 import { TrameLauncherDialog } from './dialogs';
 import { ParaViewInstanceOptions } from './paraview';
@@ -124,10 +124,10 @@ function TrameAppInstance({
     <li>
       <div style={{ flexGrow: 1 }}>
         <Collapsible trigger={title}>
-          <Info label="Data Directory" value={`${dataDirectory}`} />
+          <Info label="Data Directory" value={<Path path={dataDirectory} />} />
           <Info label="Port" value={`${port}`} />
           <Info label="Base URL" value={`${base_url}`} />
-          <Info label="Log File" value={log} />
+          <Info label="Log File" value={<Path path={log} />} />
           {connectButton}
         </Collapsible>
       </div>
@@ -175,7 +175,7 @@ function TrameApp({ index }: { index: number }) {
   return (
     <>
       <Collapsible trigger={title}>
-        <Info label="Path" value={path} />
+        <Info label="Path" value={<Path path={path} />} />
 
         <div style={{ height: '40px', margin: '10px 0 0 0' }}>
           <button className="launch-button" onClick={launchInstance}>

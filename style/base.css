@@ -23,12 +23,30 @@
   flex-direction: row;
 }
 
+.toolbar {
+  display: inline-block;
+  width: 100%;
+  margin: 0 0 10px 0;
+}
+
 .launch-button {
   background: green;
   color: white;
   border: 0 solid green;
   float: right;
   padding: 4px 8px;
+  height: 32px;
+}
+
+.icon-button {
+  background: var(--jp-layout-color2);
+  color: var(--jp-content-font-color0);
+  border: 0 solid;
+  padding: 4px 4px;
+}
+
+.icon-button:hover {
+  background: var(--jp-layout-color3);
 }
 
 .form-input {

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import Collapsible from 'react-collapsible';
 import { showDialog, showErrorMessage } from '@jupyterlab/apputils';
+import { refreshIcon } from '@jupyterlab/ui-components';
 
 import { requestAPI, useAPI } from './handler';
 import { ParaViewLauncherDialog } from './dialogs';
@@ -79,12 +80,15 @@ export default function ParaViewSidepanelSegment() {
 
   return (
     <>
-      <h3>
-        Running ParaView backends:
+      <h3>Running ParaView backends:</h3>
+      <span className="toolbar">
+        <button className="icon-button" onClick={refresh}>
+          <refreshIcon.react tag="div" width="20px" />
+        </button>
         <button className="launch-button" onClick={newInstance}>
           Launch
         </button>
-      </h3>
+      </span>
       <div id="paraview-instances" className="instance-list">
         <ParaViewContext.Provider value={instances ?? []}>
           {instances?.map((_, idx) => <ParaViewInstance index={idx} />)}
