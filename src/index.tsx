@@ -8,6 +8,7 @@ import React from 'react';
 
 import ParaViewSidepanelSegment from './paraview';
 import TrameSidepanelSegment from './trame';
+import { trameIcon } from './icons';
 
 const plugin: JupyterFrontEndPlugin<void> = {
   id: 'juviz-extension',
@@ -16,7 +17,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     const panel = new SplitPanel();
     panel.orientation = 'vertical';
     panel.id = 'juviz-sidepanel';
-    panel.title.iconClass = 'jp-ExtensionIcon jp-SideBar-tabIcon';
+    panel.title.icon = trameIcon;
     panel.title.caption = 'JuViz';
 
     // ParaView Segment
