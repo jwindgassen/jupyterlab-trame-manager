@@ -87,9 +87,7 @@ export default function ParaViewSidepanelSegment() {
       </h3>
       <div id="paraview-instances" className="instance-list">
         <ParaViewContext.Provider value={instances ?? []}>
-          {instances?.map((_, idx) => (
-            <ParaViewInstance index={idx} />
-          ))}
+          {instances?.map((_, idx) => <ParaViewInstance index={idx} />)}
         </ParaViewContext.Provider>
       </div>
     </>

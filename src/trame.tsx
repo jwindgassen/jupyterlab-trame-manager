@@ -210,9 +210,7 @@ export default function TrameSidepanelSegment() {
       <h3>trame Apps:</h3>
       <div id="trame-instances" className="instance-list">
         <TrameContext.Provider value={instances ?? []}>
-          {instances?.map((_, idx) => (
-            <TrameApp index={idx} />
-          ))}
+          {instances?.map((_, idx) => <TrameApp index={idx} />)}
         </TrameContext.Provider>
       </div>
     </>
