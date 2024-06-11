@@ -2,6 +2,7 @@
 
 #juviz-sidepanel {
   background: var(--jp-layout-color3) !important;
+  min-width: 300px !important;
 }
 
 .juviz-sidepanel-segment {

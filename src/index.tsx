@@ -1,4 +1,5 @@
 import {
+  ILayoutRestorer,
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
@@ -13,7 +14,8 @@ import { trameIcon } from './icons';
 const plugin: JupyterFrontEndPlugin<void> = {
   id: 'juviz-extension',
   autoStart: true,
-  activate: (app: JupyterFrontEnd) => {
+  requires: [ILayoutRestorer],
+  activate: (app: JupyterFrontEnd, restorer: ILayoutRestorer | null) => {
     const panel = new SplitPanel();
     panel.orientation = 'vertical';
     panel.id = 'juviz-sidepanel';
@@ -29,6 +31,10 @@ const plugin: JupyterFrontEndPlugin<void> = {
     const trameSegment = ReactWidget.create(<TrameSidepanelSegment />);
     trameSegment.addClass('juviz-sidepanel-segment');
     panel.addWidget(trameSegment);
+
+    if (restorer) {
+      restorer.add(panel, 'jupyter-viz-extension:sidebar');
+    }
 
     app.shell.add(panel, 'left');
   }
