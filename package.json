@@ -7,9 +7,9 @@
         "jupyterlab",
         "jupyterlab-extension"
     ],
-    "homepage": "https://github.com/github_username/jupyter-viz-extension",
+    "homepage": "https://github.com/jwindgassen/jupyter_viz_extension",
     "bugs": {
-        "url": "https://github.com/github_username/jupyter-viz-extension/issues"
+        "url": "https://github.com/jwindgassen/jupyter_viz_extension/issues"
     },
     "license": "BSD-3-Clause",
     "author": {
@@ -27,7 +27,7 @@
     "style": "style/index.css",
     "repository": {
         "type": "git",
-        "url": "https://github.com/github_username/jupyter-viz-extension.git"
+        "url": "https://github.com/jwindgassen/jupyter_viz_extension.git"
     },
     "scripts": {
         "build": "jlpm build:lib && jlpm build:labextension:dev",
