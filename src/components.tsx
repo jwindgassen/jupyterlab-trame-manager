@@ -5,16 +5,8 @@ import { CommandRegistry } from '@lumino/commands';
 
 export function Info(props: { label: string; value: React.ReactNode }) {
   return (
-    <div style={{ display: 'flex' }}>
-      <span
-        style={{
-          fontWeight: 'bold',
-          alignContent: 'center',
-          whiteSpace: 'nowrap'
-        }}
-      >
-        {props.label}:
-      </span>
+    <div>
+      <span className="info-label">{props.label}:</span>
       &nbsp;
       {props.value}
     </div>
@@ -29,27 +21,14 @@ export function Path(props: { path: string }) {
   };
 
   const handleOpen = async () => {
-    if (commandRegistryInstance.instance) {
-      await commandRegistryInstance.instance.execute('filebrowser:open-path', {
-        path: props.path
-      });
-    }
+    await commandRegistryInstance.instance?.execute('filebrowser:open', {
+      path: props.path
+    });
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        flexGrow: 1,
-        alignContent: 'center'
-      }}
-    >
-      <div
-        style={{ flexGrow: 1, alignContent: 'center', whiteSpace: 'nowrap' }}
-      >
-        {props.path}
-      </div>
+    <div className="path-container">
+      <div>{props.path}</div>
       <button className="iconButton" onClick={handleCopy}>
         <copyIcon.react tag="span" width="16px" />
       </button>
