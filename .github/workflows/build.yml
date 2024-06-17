@@ -31,9 +31,11 @@ jobs:
         jlpm run lint:check
 
     - name: Build the extension
+      env:
+        JUVIZ_CONFIGURATION: desktop
       run: |
         set -eux
-        python -m pip install .[test]
+        python -m pip install .
 
         jupyter server extension list
         jupyter server extension list 2>&1 | grep -ie "jupyter_viz_extension.*OK"
@@ -78,7 +80,6 @@ jobs:
         sudo rm -rf $(which node)
 
         pip install "jupyterlab>=4.0.0,<5" jupyter_viz_extension*.whl
-
 
         jupyter server extension list
         jupyter server extension list 2>&1 | grep -ie "jupyter_viz_extension.*OK"
