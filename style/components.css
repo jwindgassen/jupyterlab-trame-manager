@@ -1,0 +1,28 @@
+/* Info */
+.info-label {
+  font-weight: bold;
+  align-content: center;
+  white-space: nowrap;
+}
+
+/* Path */
+.path-container {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  align-content: center;
+}
+
+.path-container > div {
+  flex-grow: 1;
+  align-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 0;
+}
+
+/* Make Parent Flex */
+div:has(> .path-container) {
+  display: flex;
+}

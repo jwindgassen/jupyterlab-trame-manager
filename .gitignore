@@ -10,9 +10,9 @@ node_modules/
 jupyter_viz_extension/labextension
 # Version file is handled by hatchling
 jupyter_viz_extension/_version.py
-# Yarn cache
-.yarn/
 
+# Created by https://www.gitignore.io/api/python
+# Edit at https://www.gitignore.io/?templates=python
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -122,3 +122,6 @@ dmypy.json
 
 # OSX files
 .DS_Store
+
+# Yarn cache
+.yarn/

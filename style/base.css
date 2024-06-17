@@ -1,7 +1,9 @@
 @import url('collapsible.css');
+@import url('components.css');
 
-.juviz-sidepanel {
-  background: var(--jp-layout-color3);
+#juviz-sidepanel {
+  background: var(--jp-layout-color3) !important;
+  min-width: 450px !important;
 }
 
 .juviz-sidepanel-segment {
@@ -22,12 +24,30 @@
   flex-direction: row;
 }
 
+.toolbar {
+  display: inline-block;
+  width: 100%;
+  margin: 0 0 10px;
+}
+
 .launch-button {
   background: green;
   color: white;
   border: 0 solid green;
   float: right;
   padding: 4px 8px;
+  height: 32px;
+}
+
+.icon-button {
+  background: var(--jp-layout-color2);
+  color: var(--jp-content-font-color0);
+  border: 0 solid;
+  padding: 4px;
+}
+
+.icon-button:hover {
+  background: var(--jp-layout-color3);
 }
 
 .form-input {
