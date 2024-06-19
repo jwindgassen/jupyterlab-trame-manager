@@ -1,8 +1,21 @@
 /* Info */
+.info-container {
+  display: flex;
+  align-items: baseline;
+}
+
 .info-label {
   font-weight: bold;
-  align-content: center;
   white-space: nowrap;
+  margin: 4px 5px 0 0;
+}
+
+.info-value {
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 0;
 }
 
 /* Path */

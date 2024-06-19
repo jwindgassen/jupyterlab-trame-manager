@@ -5,10 +5,13 @@ import { CommandRegistry } from '@lumino/commands';
 
 export function Info(props: { label: string; value: React.ReactNode }) {
   return (
-    <div>
+    <div className="info-container">
       <span className="info-label">{props.label}:</span>
-      &nbsp;
-      {props.value}
+      {typeof props.value === 'object' ? (
+        props.value
+      ) : (
+        <span className="info-value">{props.value}</span>
+      )}
     </div>
   );
 }
@@ -21,7 +24,8 @@ export function Path(props: { path: string }) {
   };
 
   const handleOpen = async () => {
-    await commandRegistryInstance.instance?.execute('filebrowser:open', {
+    console.log(commandRegistryInstance.instance);
+    await commandRegistryInstance.instance?.execute('filebrowser:open-path', {
       path: props.path
     });
   };
@@ -29,10 +33,10 @@ export function Path(props: { path: string }) {
   return (
     <div className="path-container">
       <div>{props.path}</div>
-      <button className="iconButton" onClick={handleCopy}>
+      <button className="icon-button" onClick={handleCopy}>
         <copyIcon.react tag="span" width="16px" />
       </button>
-      <button className="iconButton" onClick={handleOpen}>
+      <button className="icon-button" onClick={handleOpen}>
         <folderIcon.react tag="span" width="16px" />
       </button>
     </div>

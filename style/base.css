@@ -43,7 +43,8 @@
   background: var(--jp-layout-color2);
   color: var(--jp-content-font-color0);
   border: 0 solid;
-  padding: 4px;
+  padding: 2px 4px;
+  margin: 2px;
 }
 
 .icon-button:hover {
@@ -61,6 +62,7 @@
   margin: 0 5px;
   background: var(--jp-layout-color2);
   flex-shrink: 0;
+  color: var(--jp-content-font-color2);
 }
 
 .open-button:hover {
