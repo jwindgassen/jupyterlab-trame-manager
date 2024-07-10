@@ -1,7 +1,7 @@
 {
   "NotebookApp": {
     "nbserver_extensions": {
-      "jupyter_viz_extension": true
+      "jupyterlab_trame_manager": true
     }
   }
 }

@@ -58,7 +58,7 @@ class JscConfiguration(Configuration):
             raise ValueError(f"Unkown Partition: {options['partition']}")
 
         # Create a tempfile and write the SLURM Config and log files into it
-        temp_dir = Path(os.getenv("SCRATCH"), "juviz-jobs")
+        temp_dir = Path(os.getenv("SCRATCH"), "trame-manager-jobs")
         temp_dir.mkdir(parents=True, exist_ok=True)
 
         job_dir = Path(mkdtemp(prefix=os.getenv("USER"), dir=temp_dir))

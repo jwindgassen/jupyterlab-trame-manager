@@ -1,4 +1,4 @@
-# Making a new release of jupyter_viz_extension
+# Making a new release of jupyterlab_trame_manager
 
 The extension can be published to `PyPI` and `npm` manually or using the [Jupyter Releaser](https://github.com/jupyter-server/jupyter_releaser).
 

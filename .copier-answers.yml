@@ -6,9 +6,9 @@ author_name: Jonathan Windgassen
 has_binder: false
 has_settings: true
 kind: server
-labextension_name: jupyter-viz-extension
+labextension_name: jupyterlab-trame-manager
 project_short_description: A JupyterLab extension.
-python_name: jupyter_viz_extension
-repository: https://github.com/github_username/jupyter-viz-extension.git
+python_name: jupyterlab_trame_manager
+repository: https://github.com/github_username/jupyterlab-trame-manager.git
 test: false
 

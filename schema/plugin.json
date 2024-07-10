@@ -1,7 +1,7 @@
 {
   "jupyter.lab.shortcuts": [],
-  "title": "jupyter-viz-extension",
-  "description": "jupyter-viz-extension settings.",
+  "title": "jupyterlab-trame-manager",
+  "description": "jupyterlab-trame-manager settings.",
   "type": "object",
   "properties": {},
   "additionalProperties": false

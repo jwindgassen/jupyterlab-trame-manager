@@ -3,7 +3,7 @@ requires = ["hatchling>=1.5.0", "jupyterlab>=4.0.0,<5", "hatch-nodejs-version>=0
 build-backend = "hatchling.build"
 
 [project]
-name = "jupyter_viz_extension"
+name = "jupyterlab_trame_manager"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
@@ -33,25 +33,25 @@ source = "nodejs"
 fields = ["description", "authors", "urls"]
 
 [tool.hatch.build.targets.sdist]
-artifacts = ["jupyter_viz_extension/labextension"]
+artifacts = ["jupyterlab_trame_manager/labextension"]
 exclude = [".github", "binder"]
 
 [tool.hatch.build.targets.wheel.shared-data]
-"jupyter_viz_extension/labextension" = "share/jupyter/labextensions/jupyter-viz-extension"
-"install.json" = "share/jupyter/labextensions/jupyter-viz-extension/install.json"
+"jupyterlab_trame_manager/labextension" = "share/jupyter/labextensions/jupyterlab-trame-manager"
+"install.json" = "share/jupyter/labextensions/jupyterlab-trame-manager/install.json"
 "jupyter-config/server-config" = "etc/jupyter/jupyter_server_config.d"
 
 [tool.hatch.build.hooks.version]
-path = "jupyter_viz_extension/_version.py"
+path = "jupyterlab_trame_manager/_version.py"
 
 [tool.hatch.build.hooks.jupyter-builder]
 dependencies = ["hatch-jupyter-builder>=0.5"]
 build-function = "hatch_jupyter_builder.npm_builder"
 ensured-targets = [
-    "jupyter_viz_extension/labextension/static/style.js",
-    "jupyter_viz_extension/labextension/package.json",
+    "jupyterlab_trame_manager/labextension/static/style.js",
+    "jupyterlab_trame_manager/labextension/package.json",
 ]
-skip-if-exists = ["jupyter_viz_extension/labextension/static/style.js"]
+skip-if-exists = ["jupyterlab_trame_manager/labextension/static/style.js"]
 
 [tool.hatch.build.hooks.jupyter-builder.build-kwargs]
 build_cmd = "build:prod"
@@ -61,7 +61,7 @@ npm = ["jlpm"]
 build_cmd = "install:extension"
 npm = ["jlpm"]
 source_dir = "src"
-build_dir = "jupyter_viz_extension/labextension"
+build_dir = "jupyterlab_trame_manager/labextension"
 
 [tool.jupyter-releaser.options]
 version_cmd = "hatch version"

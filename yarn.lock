@@ -3791,9 +3791,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jupyter-viz-extension@workspace:.":
+"jupyterlab-trame-manager@workspace:.":
   version: 0.0.0-use.local
-  resolution: "jupyter-viz-extension@workspace:."
+  resolution: "jupyterlab-trame-manager@workspace:."
   dependencies:
     "@jupyterlab/application": ^4.2.2
     "@jupyterlab/builder": ^4.0.0

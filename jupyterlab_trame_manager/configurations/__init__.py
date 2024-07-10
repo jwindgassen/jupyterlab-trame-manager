@@ -15,11 +15,12 @@ from ..proxy import make_trame_proxy_handler
 
 class Configuration(ABC):
     """
-    The Configuration class allows users to customize the behaviour of the JuViz Backend. By creating a custom
+    The Configuration class allows users to customize the behaviour of the Backend. By creating a custom
     Configuration class, you can change how ParaView is launched, how trame instances are launched and how to load the
-    config file for a JuViz app. See the methods here or the predefined configuration for reference.
-    The Configuration is determined at runtime using the "JUVIZ_CONFIGURATION" environment variable.
+    config file for a trame app. See the methods here or the predefined configuration for reference.
+    The Configuration is determined at runtime using the "TRAME_MANAGER_CONFIGURATION" environment variable.
     """
+
     def __init__(self, logger):
         self._logger = logger
 
@@ -39,7 +40,7 @@ class Configuration(ABC):
 
     def discover_apps(self) -> list[TrameApp]:
         """
-        Search the system for trame apps that can be launched with JuViz.
+        Search the system for trame apps that can be launched.
         The default behavious will rely on the `JUPYTER_PATH`environment variable, where trame apps will be found in
         `trame/<app_name> directories`.
 
@@ -68,7 +69,7 @@ class Configuration(ABC):
 
         - name: The display name of the app to be shown in the UI
         - command: The shell command that will be executed to lauch an instance for this trame app
-            This command must append the $JUVIZ_ARGS environment variable to the python script, which provides
+            This command must append the $TRAME_INSTANCE_ARGS environment variable to the python script, which provides
             some information for trame. See L{Configuration.generate_trame_env} for the generation of the variable.
         - working_directore: Optional, location here I{command} will be executed.
 
@@ -135,17 +136,17 @@ class Configuration(ABC):
 
     def generate_trame_env(self, instance: TrameAppInstance) -> dict:
         """
-        Generated the environment used by the trame instance. This environment contains the $JUVIZ_ARGS variable, that
+        Generated the environment used by the trame instance. This environment contains the $TRAME_INSTANCE_ARGS variable, that
         passes information, e.g., the port, to trame.
 
         @param instance: A reference to the trame instance that will be launched
         @return: The generated environment
         """
         env = os.environ.copy()
-        env["JUVIZ_ARGS"] = (f"--port={instance.port} "
-                             f"--data={instance.data_directory} "
-                             f"--authKeyFile={instance.auth_key_file} "
-                             f"--server")
+        env["TRAME_INSTANCE_ARGS"] = (f"--port={instance.port} "
+                                      f"--data={instance.data_directory} "
+                                      f"--authKeyFile={instance.auth_key_file} "
+                                      f"--server")
         return env
 
     def route_trame(self, instance: TrameAppInstance, server_app: ServerApp) -> str:
@@ -198,8 +199,8 @@ class Configuration(ABC):
     @abstractmethod
     async def get_running_servers(self) -> list[ParaViewServer]:
         """
-        Get the list of currently running ParaView Servers that were launched by JuViz. This information can, e.g., be
-        fetched from the job scheduler.
+        Get the list of currently running ParaView Servers that were launched via the extension. This information can,
+        e.g., be fetched from the job scheduler.
 
         @return: A list of all ParaView Servers
         """

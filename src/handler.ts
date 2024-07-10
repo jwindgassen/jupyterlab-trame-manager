@@ -16,7 +16,7 @@ export async function requestAPI<T>(
   const settings = ServerConnection.makeSettings();
   const requestUrl = URLExt.join(
     settings.baseUrl,
-    'jupyter-viz-extension', // API Namespace
+    'trame-manager', // API Namespace
     endPoint
   );
 

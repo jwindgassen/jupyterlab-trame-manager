@@ -23,10 +23,10 @@ class Model:
     """
     Model/Controller that keeps track of all running instances and allows to launch new instances. Most of the actual
     logic is implemented in a "Configuration", which allows for users to create different code for their specific
-    platforms and HPC infrastructure. Configuration is selected at runtime using the "JUVIZ_CONFIGURATION" environment
+    platforms and HPC infrastructure. Configuration is selected at runtime using the "TRAME_MANAGER_CONFIGURATION" environment
     variable. The Model will forward most calls to this Configuration.
 
-    @see: jupyter_viz_extension.configurations.Configuration
+    @see: jupyterlab_trame_manager.configurations.Configuration
     """
 
     _configuration: Configuration
@@ -41,11 +41,11 @@ class Model:
         self._server_app = server_app
 
         # Get Configuration
-        conf_name = os.getenv("JUVIZ_CONFIGURATION")
+        conf_name = os.getenv("TRAME_MANAGER_CONFIGURATION")
         if conf_name is None:
-            raise EnvironmentError("'JUVIZ_CONFIGURATION' not set!")
+            raise EnvironmentError("'TRAME_MANAGER_CONFIGURATION' not set!")
 
-        module = import_module(f"jupyter_viz_extension.configurations.{conf_name}")
+        module = import_module(f"jupyterlab_trame_manager.configurations.{conf_name}")
         cls = [
             cls for cls in module.__dict__.values()
             if isinstance(cls, type) and issubclass(cls, Configuration) and cls != Configuration
@@ -120,11 +120,11 @@ class Model:
         instance = [app for app in self.apps[app_name].instances if app.name == instance_name][0]
         server = [server for server in self.servers if server.name == server_name][0]
 
-        juviz_url = url_path_join(f"http://localhost:{instance.port}",  "juviz")  # ToDo: Also use JSP?
-        self._log.info(f"JuViz Endpoint: {juviz_url!r}")
+        app_url = url_path_join(f"http://localhost:{instance.port}",  "jupyterlab")  # ToDo: Also use JSP?
+        self._log.info(f"trame App Endpoint: {app_url!r}")
 
         client = AsyncHTTPClient()
-        await client.fetch(juviz_url, method="POST", body=json.dumps({
+        await client.fetch(app_url, method="POST", body=json.dumps({
             "action": "connect",
             "url": server.connection_address,
             "port": 11111,
@@ -134,9 +134,9 @@ class Model:
 
     async def disconnect(self, app_name, instance_name):
         instance = [app for app in self.apps[app_name].instances if app.name == instance_name][0]
-        juviz_url = url_path_join(f"http://localhost:{instance.port}",  "juviz")
+        app_url = url_path_join(f"http://localhost:{instance.port}",  "jupyterlab")
 
         client = AsyncHTTPClient()
-        await client.fetch(juviz_url, method="POST", body=json.dumps({
+        await client.fetch(app_url, method="POST", body=json.dumps({
             "action": "disconnect",
         }))

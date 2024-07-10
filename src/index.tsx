@@ -13,7 +13,7 @@ import { trameIcon } from './icons';
 import { commandRegistryInstance } from './components';
 
 const plugin: JupyterFrontEndPlugin<void> = {
-  id: 'juviz-extension',
+  id: 'jupyterlab-trame-manager',
   autoStart: true,
   requires: [ILayoutRestorer],
   activate: (app: JupyterFrontEnd, restorer: ILayoutRestorer | null) => {
@@ -21,22 +21,22 @@ const plugin: JupyterFrontEndPlugin<void> = {
 
     const panel = new SplitPanel();
     panel.orientation = 'vertical';
-    panel.id = 'juviz-sidepanel';
+    panel.id = 'trame-manager-sidepanel';
     panel.title.icon = trameIcon;
-    panel.title.caption = 'JuViz';
+    panel.title.caption = 'trame Manager';
 
     // ParaView Segment
     const paraViewSegment = ReactWidget.create(<ParaViewSidepanelSegment />);
-    paraViewSegment.addClass('juviz-sidepanel-segment');
+    paraViewSegment.addClass('trame-manager-sidepanel-segment');
     panel.addWidget(paraViewSegment);
 
     // trame Segment
     const trameSegment = ReactWidget.create(<TrameSidepanelSegment />);
-    trameSegment.addClass('juviz-sidepanel-segment');
+    trameSegment.addClass('trame-manager-sidepanel-segment');
     panel.addWidget(trameSegment);
 
     if (restorer) {
-      restorer.add(panel, 'jupyter-viz-extension:sidebar');
+      restorer.add(panel, 'jupyterlab-trame-manager:sidebar');
     }
 
     app.shell.add(panel, 'left');
