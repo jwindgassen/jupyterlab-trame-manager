@@ -2,6 +2,12 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.5.1
+
+No merged PRs
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.5.0
 
 ([Full Changelog](https://github.com/jwindgassen/jupyterlab_trame_manager/compare/v0.4.0...3b864edc335ca3ac188fe5bca96287a172e8e8f7))
@@ -15,8 +21,6 @@
 ([GitHub contributors page for this release](https://github.com/jwindgassen/jupyterlab_trame_manager/graphs/contributors?from=2023-08-29&to=2024-06-17&type=c))
 
 [@jwindgassen](https://github.com/search?q=repo%3Ajwindgassen%2Fjupyterlab_trame_manager+involves%3Ajwindgassen+updated%3A2023-08-29..2024-06-17&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.4.0
 
