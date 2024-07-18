@@ -1,8 +1,8 @@
-# jupyterlab_trame_manager
+# jupyterlab-trame-manager
 
-[![Github Actions Status](https://github.com/jwindgassen/jupyterlab_trame_manager/workflows/Build/badge.svg)](https://github.com/jwindgassen/jupyterlab_trame_manager/actions/workflows/build.yml)
+[![Github Actions Status](https://github.com/jwindgassen/jupyterlab-trame-manager/workflows/Build/badge.svg)](https://github.com/jwindgassen/jupyterlab_trame_manager/actions/workflows/build.yml)
 
-**jupyterlab_trame_manager** (previously known as **jupyter-viz-extension** or **JuViz**) is an extension for JupyterLab that enables the usage of [ParaView trame](https://kitware.github.io/trame/)
+**jupyterlab-trame-manager** (previously known as **jupyter-viz-extension** or **JuViz**) is an extension for JupyterLab that enables the usage of [ParaView trame](https://kitware.github.io/trame/)
 within JupyterLab. It bridges Cloud and interactive Visualization, allowing users to run and control their customized
 visualization and analysis apps, written in trame, from inside the JupyterLab.
 It was written with Cloud-Computing and HPC in mind and is designed to be platform-independant.

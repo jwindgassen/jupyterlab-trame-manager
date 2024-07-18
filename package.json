@@ -7,9 +7,9 @@
         "jupyterlab",
         "jupyterlab-extension"
     ],
-    "homepage": "https://github.com/jwindgassen/jupyterlab_trame_manager",
+    "homepage": "https://github.com/jwindgassen/jupyterlab-trame-manager",
     "bugs": {
-        "url": "https://github.com/jwindgassen/jupyterlab_trame_manager/issues"
+        "url": "https://github.com/jwindgassen/jupyterlab-trame-manager/issues"
     },
     "license": "BSD-3-Clause",
     "author": {
@@ -27,7 +27,7 @@
     "style": "style/index.css",
     "repository": {
         "type": "git",
-        "url": "https://github.com/jwindgassen/jupyterlab_trame_manager.git"
+        "url": "https://github.com/jwindgassen/jupyterlab-trame-manager.git"
     },
     "scripts": {
         "build": "jlpm build:lib && jlpm build:labextension:dev",
