@@ -9,6 +9,6 @@ kind: server
 labextension_name: jupyterlab-trame-manager
 project_short_description: A JupyterLab extension.
 python_name: jupyterlab_trame_manager
-repository: https://github.com/github_username/jupyterlab-trame-manager.git
+repository: https://github.com/jwindgassen/jupyterlab-trame-manager.git
 test: false
 
