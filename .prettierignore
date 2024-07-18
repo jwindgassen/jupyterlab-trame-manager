@@ -3,5 +3,5 @@ node_modules
 **/lib
 **/package.json
 !/package.json
-jupyter_viz_extension
+jupyterlab_trame_manager
 venv

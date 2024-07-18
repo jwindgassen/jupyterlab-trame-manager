@@ -1,12 +1,12 @@
 @import url('collapsible.css');
 @import url('components.css');
 
-#juviz-sidepanel {
+#trame-manager-sidepanel {
   background: var(--jp-layout-color3) !important;
   min-width: 450px !important;
 }
 
-.juviz-sidepanel-segment {
+.trame-manager-sidepanel-segment {
   background: var(--jp-layout-color0);
   color: var(--jp-content-font-color0);
   padding: 10px;

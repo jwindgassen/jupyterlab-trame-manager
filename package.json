@@ -1,5 +1,5 @@
 {
-    "name": "jupyter-viz-extension",
+    "name": "jupyterlab-trame-manager",
     "version": "0.5.1",
     "description": "A JupyterLab extension.",
     "keywords": [
@@ -7,9 +7,9 @@
         "jupyterlab",
         "jupyterlab-extension"
     ],
-    "homepage": "https://github.com/jwindgassen/jupyter_viz_extension",
+    "homepage": "https://github.com/jwindgassen/jupyterlab-trame-manager",
     "bugs": {
-        "url": "https://github.com/jwindgassen/jupyter_viz_extension/issues"
+        "url": "https://github.com/jwindgassen/jupyterlab-trame-manager/issues"
     },
     "license": "BSD-3-Clause",
     "author": {
@@ -27,7 +27,7 @@
     "style": "style/index.css",
     "repository": {
         "type": "git",
-        "url": "https://github.com/jwindgassen/jupyter_viz_extension.git"
+        "url": "https://github.com/jwindgassen/jupyterlab-trame-manager.git"
     },
     "scripts": {
         "build": "jlpm build:lib && jlpm build:labextension:dev",
@@ -38,7 +38,7 @@
         "build:prod": "jlpm clean && jlpm build:lib:prod && jlpm build:labextension",
         "clean": "jlpm clean:lib",
         "clean:all": "jlpm clean:lib && jlpm clean:labextension && jlpm clean:lintcache",
-        "clean:labextension": "rimraf jupyter_viz_extension/labextension jupyter_viz_extension/_version.py",
+        "clean:labextension": "rimraf jupyterlab_trame_manager/labextension jupyterlab_trame_manager/_version.py",
         "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
         "clean:lintcache": "rimraf .eslintcache .stylelintcache",
         "eslint": "jlpm eslint:check --fix",
@@ -105,12 +105,12 @@
                     "pip"
                 ],
                 "base": {
-                    "name": "jupyter_viz_extension"
+                    "name": "jupyterlab_trame_manager"
                 }
             }
         },
         "extension": true,
-        "outputDir": "jupyter_viz_extension/labextension",
+        "outputDir": "jupyterlab_trame_manager/labextension",
         "schemaDir": "schema"
     },
     "eslintIgnore": [

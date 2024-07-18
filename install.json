@@ -1,5 +1,5 @@
 {
   "packageManager": "python",
-  "packageName": "jupyter_viz_extension",
-  "uninstallInstructions": "Use your Python package manager (pip, conda, etc.) to uninstall the package jupyter_viz_extension"
+  "packageName": "jupyterlab_trame_manager",
+  "uninstallInstructions": "Use your Python package manager (pip, conda, etc.) to uninstall the package jupyterlab_trame_manager"
 }

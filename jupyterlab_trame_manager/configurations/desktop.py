@@ -21,7 +21,7 @@ class DesktopConfiguration(Configuration):
         ]
 
     async def launch_paraview(self, options) -> tuple[int, str]:
-        raise RuntimeError("Can't launch ParaView via JuViz on Desktop")
+        raise RuntimeError("Can't launch ParaView on Desktop")
 
     async def get_user_data(self) -> UserData:
         home = os.path.expanduser("~")
