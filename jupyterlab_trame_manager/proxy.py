@@ -18,6 +18,7 @@ def make_trame_proxy_handler(instance: TrameAppInstance, base_url: str) -> tuple
         # Append authKey to URL if we are at the base-url
         if path in ("/", "/index.html"):
             path += f"?secret={instance.auth_key}"
+            path += "&disableSharedArrayBuffer=1"  # Disable COI
 
         return path
 
