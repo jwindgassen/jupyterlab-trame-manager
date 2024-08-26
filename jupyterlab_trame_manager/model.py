@@ -8,8 +8,7 @@ from jupyter_server.utils import url_path_join
 from socket import socket
 from tornado.httpclient import AsyncHTTPClient
 
-from .configurations import Configuration
-from .types import *
+from .configuration import Configuration, UserData, TrameApp, TrameAppInstance, ParaViewServer
 
 
 def _next_open_port() -> int:
@@ -120,7 +119,7 @@ class Model:
         instance = [app for app in self.apps[app_name].instances if app.name == instance_name][0]
         server = [server for server in self.servers if server.name == server_name][0]
 
-        app_url = url_path_join(f"http://localhost:{instance.port}",  "api")  # ToDo: Also use JSP?
+        app_url = url_path_join(f"http://localhost:{instance.port}", "api")  # ToDo: Also use JSP?
         self._log.info(f"trame App Endpoint: {app_url!r}")
 
         client = AsyncHTTPClient()
@@ -134,7 +133,7 @@ class Model:
 
     async def disconnect(self, app_name, instance_name):
         instance = [app for app in self.apps[app_name].instances if app.name == instance_name][0]
-        app_url = url_path_join(f"http://localhost:{instance.port}",  "api")
+        app_url = url_path_join(f"http://localhost:{instance.port}", "api")
 
         client = AsyncHTTPClient()
         await client.fetch(app_url, method="POST", body=json.dumps({

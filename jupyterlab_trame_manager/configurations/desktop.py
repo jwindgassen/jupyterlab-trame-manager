@@ -1,7 +1,4 @@
-import os
-
-from . import Configuration
-from ..types import *
+from ..configuration import Configuration, UserData, ParaViewServer
 
 
 class DesktopConfiguration(Configuration):
@@ -15,7 +12,6 @@ class DesktopConfiguration(Configuration):
                 time_used="00:00",
                 time_limit="00:00",
                 state="RUNNING",
-                node_list="",
                 connection_address="localhost:11111"
             )
         ]
@@ -24,5 +20,4 @@ class DesktopConfiguration(Configuration):
         raise RuntimeError("Can't launch ParaView on Desktop")
 
     async def get_user_data(self) -> UserData:
-        home = os.path.expanduser("~")
-        return UserData("Local User", home, [], [])
+        return UserData(user="Local User", accounts=[], partitions=[])

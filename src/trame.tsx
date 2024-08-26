@@ -23,7 +23,7 @@ type TrameInstanceOptions = {
   name: string;
   dataDirectory: string;
   port: number;
-  base_url: string;
+  baseUrl: string;
   log: string;
 };
 
@@ -46,12 +46,12 @@ function TrameAppInstance({
   appIndex,
   instanceIndex
 }: TrameInstanceProps) {
-  const { base_url, dataDirectory, log, name, port } =
+  const { baseUrl, dataDirectory, log, name, port } =
     useContext(TrameContext)[appIndex].instances[instanceIndex];
   const [connection, setConnection] = useState<[string, string] | null>(null);
 
   function openInstance() {
-    window.open(base_url, '_blank', 'noreferrer');
+    window.open(baseUrl, '_blank', 'noreferrer');
   }
 
   async function connect() {
@@ -126,7 +126,7 @@ function TrameAppInstance({
         <Collapsible trigger={title}>
           <Info label="Data Directory" value={<Path path={dataDirectory} />} />
           <Info label="Port" value={`${port}`} />
-          <Info label="Base URL" value={`${base_url}`} />
+          <Info label="Base URL" value={`${baseUrl}`} />
           <Info label="Log File" value={<Path path={log} />} />
           {connectButton}
         </Collapsible>

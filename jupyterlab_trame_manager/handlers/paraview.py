@@ -13,17 +13,17 @@ class ParaViewHandler(APIHandler):
 
     @authenticated
     async def get(self):
-        await self.finish(json.dumps(
-            [server.dump() for server in self._model.servers]
-        ))
-        
+        await self.finish(
+            "[" + ",".join(server.model_dump_json(by_alias=True) for server in self._model.servers) + "]"
+        )  # ToDo: Proper Serialization
+
     @authenticated
     async def post(self):
         try:
             return_code, message = await self._model.launch_paraview(json.loads(self.request.body))
             self.set_status(200)
             await self.finish({"returnCode": return_code, "message": message})
-            
+
         except Exception as e:
             self.log.error(str(e))
             self.set_status(400)

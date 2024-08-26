@@ -1,4 +1,3 @@
-import json
 import os
 from jupyter_server.base.handlers import APIHandler
 from tornado.web import authenticated
@@ -14,10 +13,10 @@ class TrameHandler(APIHandler):
 
     @authenticated
     async def get(self):
-        await self.finish(json.dumps([
-            app.dump() for app in self._model.apps.values()
-        ]))
-    
+        await self.finish(
+            "[" + ",".join(app.model_dump_json(by_alias=True) for app in self._model.apps.values()) + "]"
+        )  # ToDo: Proper Serialization
+
     @authenticated
     async def post(self):
         try:
@@ -32,8 +31,8 @@ class TrameHandler(APIHandler):
 
             instance = await self._model.launch_trame(app_name, name=name, data_directory=data_directory)
             self.set_status(200)
-            await self.finish(instance.dump())
-            
+            await self.finish(instance.model_dump_json(by_alias=True))
+
         except Exception as e:
             self.log.error(str(e))
             self.set_status(400)

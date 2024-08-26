@@ -6,9 +6,8 @@ from pathlib import Path
 from re import findall
 from tempfile import mkdtemp
 
-from .. import Configuration
-from ...cmd import output
-from ...types import *
+from jupyterlab_trame_manager.configuration import Configuration, UserData, ParaViewServer
+from jupyterlab_trame_manager.cmd import output
 
 
 async def _get_accounts():
@@ -23,7 +22,8 @@ async def _get_partitions():
 class JscConfiguration(Configuration):
     async def get_running_servers(self) -> list[ParaViewServer]:
         _, out = await output("squeue", "--me",
-                              "--noheader", "--Format='Name:;,Account:;,Partition:;,NumNodes:;,TimeUsed:;,TimeLimit:;,State:;,NodeList'")
+                              "--noheader",
+                              "--Format='Name:;,Account:;,Partition:;,NumNodes:;,TimeUsed:;,TimeLimit:;,State:;,NodeList'")
 
         servers = []
         for server in out.splitlines():
@@ -41,8 +41,10 @@ class JscConfiguration(Configuration):
                 time_used=time_used,
                 time_limit=time_limit,
                 state=state,
+                connection_address=f"jwb{root_node}i.juwels" if state == "RUNNING" else None,
+                # Extra Args:
                 node_list=node_list,
-                connection_address=f"jwb{root_node}i.juwels" if state == "RUNNING" else None
+                root_node=root_node,
             )
             servers.append(server)
 
@@ -78,6 +80,5 @@ class JscConfiguration(Configuration):
             _get_accounts(),
             _get_partitions()
         )
-        home = os.path.expanduser("~")
 
-        return UserData(username[1], home, accounts, partitions)
+        return UserData(user=username[1], accounts=accounts, partitions=partitions)

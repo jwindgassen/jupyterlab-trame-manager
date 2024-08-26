@@ -12,7 +12,7 @@ async def run(programm: str, *args: str, logger=None, **kwargs) -> int:
     @return: The exit-code of the command
     """
     command = " ".join([programm, *args])
-    
+
     proccess = await asyncio.create_subprocess_shell(
         command,
         stdout=asyncio.subprocess.PIPE,
@@ -28,7 +28,7 @@ async def run(programm: str, *args: str, logger=None, **kwargs) -> int:
             logger.info(f"[stdout]\n{stdout.decode()}")
         if stderr:
             logger.info(f"[stderr]\n{stderr.decode()}")
-    
+
     return proccess.returncode
 
 
@@ -43,14 +43,14 @@ async def output(programm: str, *args: str, logger=None, **kwargs) -> tuple[int,
     @return: A tuple with exit-code of the command and a string containing the output of the command
     """
     command = " ".join([programm, *args])
-    
+
     proccess = await asyncio.create_subprocess_shell(
         command,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.STDOUT,
         **kwargs
     )
-    
+
     stdout, _ = await proccess.communicate()
 
     if logger:

@@ -15,5 +15,4 @@ class UserHandler(APIHandler):
         user_data = await self._model.get_user_data()
         self.log.debug(f"{user_data}")
 
-        await self.finish(user_data._asdict())
-        
+        await self.finish(user_data.model_dump_json(by_alias=True))
