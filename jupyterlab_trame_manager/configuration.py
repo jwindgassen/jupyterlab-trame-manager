@@ -70,7 +70,7 @@ class TrameApp(ParentModel):
     instances: list[TrameAppInstance] = []
 
 
-class UserData(ParentModel, allow="extra"):
+class UserData(ParentModel, extra="allow"):
     """
     Store data about the user.
     You can add extra information for your Configuration if required.
