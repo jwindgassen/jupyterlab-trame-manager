@@ -15,6 +15,13 @@ from typing_extensions import Annotated
 from .proxy import make_trame_proxy_handler
 
 
+__all__ = [
+    "Configuration",
+    "UserData", "TrameApp", "TrameLaunchOptions", "TrameInstance", "ParaViewLaunchOptions", "ParaViewInstance",
+    "ParentModel", "DirectoryPath", "FilePath"
+]
+
+
 # Ensure, that paths have the tilde expanded and are fully resolved, to give a nice, complete path when dumping
 def _expand_and_resolve_path(path: Path | str) -> Path:
     return Path(path).expanduser().resolve()
@@ -32,19 +39,21 @@ class ParentModel(BaseModel):
         populate_by_name=True,
     )
 
-
-class TrameAppInstance(ParentModel):
+class TrameLaunchOptions(ParentModel):
     """
-    Data related to a running Instance of a trame App.
-    Stores a combination user-defined and automatically generated fields.
+    Trame App Launch Options, specified in the launch dialog.
 
     ToDo: Let App decide what fields should be specified by the User (e.g. via app.yml)
     """
-    # User defined
     name: str
     data_directory: DirectoryPath
 
-    # Generated
+class TrameInstance(TrameLaunchOptions):
+    """
+    Data related to a running Instance of a trame App.
+
+    ToDo: Let App decide what fields should be specified by the User (e.g. via app.yml)
+    """
     uuid: str = Field(default_factory=lambda: token_hex(8))
     port: int
     base_url: networks.HttpUrl | None
@@ -67,7 +76,7 @@ class TrameApp(ParentModel):
     command: str = Field(exclude=True)
     working_directory: DirectoryPath | None = Field(exclude=True)
 
-    instances: list[TrameAppInstance] = []
+    instances: list[TrameInstance] = []
 
 
 class UserData(ParentModel, extra="allow"):
@@ -81,19 +90,25 @@ class UserData(ParentModel, extra="allow"):
     partitions: list[str]
 
 
-class ParaViewServer(ParentModel, extra="allow"):
+class ParaViewLaunchOptions(ParentModel):
     """
-    Store data about a (running) ParaView Server.
-    You can add extra information for your Configuration if required.
+    ParaView Server options, specified in the launch dialog.
+    ToDo: Other systems might need other options
     """
     name: str
     account: str
     partition: str
     nodes: int
-    time_used: str
     time_limit: str
-    state: str
 
+
+class ParaViewInstance(ParaViewLaunchOptions, extra="allow"):
+    """
+    Store data about a running ParaView Server.
+    You can add extra information for your Configuration if required.
+    """
+    time_used: str
+    state: str
     connection_address: str = Field(exclude=True)
 
 
@@ -210,7 +225,7 @@ class Configuration(ABC):
             "auth_key_file": auth_key_file,
         }
 
-    def generate_trame_env(self, instance: TrameAppInstance) -> dict:
+    def generate_trame_env(self, instance: TrameInstance) -> dict:
         """
         Generated the environment used by the trame instance. This environment contains the $TRAME_INSTANCE_ARGS variable, that
         passes information, e.g., the port, to trame.
@@ -226,7 +241,7 @@ class Configuration(ABC):
 
         return env
 
-    def route_trame(self, instance: TrameAppInstance, server_app: ServerApp) -> str:
+    def route_trame(self, instance: TrameInstance, server_app: ServerApp) -> str:
         """
         After trame has been lauched, it must be routed to the user and made accessible by the browser. This
         implementation relies on L{jupyter_server_proxy.NamedLocalProxyHandler}, that will be registered to
@@ -240,21 +255,20 @@ class Configuration(ABC):
         server_app.web_app.add_handlers('.*', [rule])
         return base_url
 
-    async def launch_trame(self, app: TrameApp, server_app, **options) -> TrameAppInstance:
+    async def launch_trame(self, app: TrameApp, options: TrameLaunchOptions, server_app) -> TrameInstance:
         """
         Launch a new instance of the given trame app.
 
-        @param app: The trame app that should be launched
-        @param server_app: A reference to the server of JupyterLab, might be required to route trame
-        @param options: The options for this instance that were entered by the user in the launch dialog. Currently, the
-            name of the instance and the data directory
-        @return: The launched trame instance
+        @param app: The trame app that should be launched.
+        @param options: The options for this instance that were entered by the user in the launch dialog.
+        @param server_app: A reference to the server of JupyterLab, might be required to route trame.
+        @return: The launched trame instance.
         """
         parameters = self.generate_trame_parameters(app)
         self.log.info(f"Starting {app.name}")
 
-        instance = TrameAppInstance(
-            **options,
+        instance = TrameInstance(
+            **options.model_dump(),
             **parameters,
             process_handle=None,
             base_url=None,
@@ -274,7 +288,7 @@ class Configuration(ABC):
         return instance
 
     @abstractmethod
-    async def get_running_servers(self) -> list[ParaViewServer]:
+    async def get_running_servers(self) -> list[ParaViewInstance]:
         """
         Get the list of currently running ParaView Servers that were launched via the extension. This information can,
         e.g., be fetched from the job scheduler.
@@ -284,13 +298,12 @@ class Configuration(ABC):
         pass
 
     @abstractmethod
-    async def launch_paraview(self, options: dict) -> tuple[int, str]:
+    async def launch_paraview(self, options: ParaViewLaunchOptions) -> tuple[int, str]:
         """
         Lauch a new ParaView Server. This server should be lauched such that L{Configuration.get_running_servers} is
         able to retrieve the information persistently, even after JupyterLab has been restarted.
 
-        @param options: The options for this instance that were entered by the user in the ParavIEW launch dialog.
-            Currently, this includes name, account, partition, nodes and timeLimit.
+        @param options: The options for this instance.
         @return: The status of the launch command. This include the return code and an error message. The message will
             be displayed in the UI, as an error when the return code is != 0
         """

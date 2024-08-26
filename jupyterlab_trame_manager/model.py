@@ -8,7 +8,8 @@ from jupyter_server.utils import url_path_join
 from socket import socket
 from tornado.httpclient import AsyncHTTPClient
 
-from .configuration import Configuration, UserData, TrameApp, TrameAppInstance, ParaViewServer
+from .configuration import *
+from .configuration import TrameLaunchOptions
 
 
 def _next_open_port() -> int:
@@ -30,7 +31,7 @@ class Model:
 
     _configuration: Configuration
     _apps: dict[str, TrameApp]
-    _servers: list[ParaViewServer]
+    _servers: list[ParaViewInstance]
 
     def __init__(self, server_app: ServerApp):
         super().__init__()
@@ -85,10 +86,11 @@ class Model:
         self._log.debug(f"Discovered apps: {', '.join(app_names)}")
         self._apps = dict(zip(app_names, apps))
 
-    async def launch_trame(self, app_name: str, **options) -> TrameAppInstance:
+    async def launch_trame(self, app_name: str, options: dict) -> TrameInstance:
         app = self.apps[app_name]
+        options = TrameLaunchOptions.model_validate(options)
 
-        instance = await self._configuration.launch_trame(app, self._server_app, **options)
+        instance = await self._configuration.launch_trame(app, options, self._server_app)
         app.instances.append(instance)
 
         return instance
@@ -106,7 +108,8 @@ class Model:
     async def get_running_servers(self):
         self._servers = await self._configuration.get_running_servers()
 
-    async def launch_paraview(self, options):
+    async def launch_paraview(self, options: dict) -> tuple[int, str]:
+        options = ParaViewLaunchOptions.model_validate(options)
         return await self._configuration.launch_paraview(options)
 
     ########################################################

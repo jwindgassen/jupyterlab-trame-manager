@@ -1,10 +1,10 @@
-from ..configuration import Configuration, UserData, ParaViewServer
+from ..configuration import Configuration, UserData, ParaViewInstance, ParaViewLaunchOptions
 
 
 class DesktopConfiguration(Configuration):
-    async def get_running_servers(self) -> list[ParaViewServer]:
+    async def get_running_servers(self) -> list[ParaViewInstance]:
         return [
-            ParaViewServer(
+            ParaViewInstance(
                 name="Local Server",
                 account="",
                 partition="",
@@ -16,7 +16,7 @@ class DesktopConfiguration(Configuration):
             )
         ]
 
-    async def launch_paraview(self, options) -> tuple[int, str]:
+    async def launch_paraview(self, options: ParaViewLaunchOptions) -> tuple[ParaViewInstance, int, str]:
         raise RuntimeError("Can't launch ParaView on Desktop")
 
     async def get_user_data(self) -> UserData:

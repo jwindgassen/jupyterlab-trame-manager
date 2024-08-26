@@ -1,4 +1,3 @@
-import os
 from jupyter_server.base.handlers import APIHandler
 from tornado.web import authenticated
 
@@ -20,16 +19,11 @@ class TrameHandler(APIHandler):
     @authenticated
     async def post(self):
         try:
-            app_name = self.get_json_body()["appName"]
-            name = self.get_json_body()["name"]
-            data_directory = self.get_json_body()["dataDirectory"]
+            body = self.get_json_body()
+            app_name = body.pop("appName")
             self.log.info(f"Launching new trame instance {app_name!r}")
 
-            if not os.path.exists(data_directory):
-                self.log.error(f"Data Directory {data_directory!r} does not exist, defaulting to User's Home directory")
-                data_directory = os.path.expanduser("~")
-
-            instance = await self._model.launch_trame(app_name, name=name, data_directory=data_directory)
+            instance = await self._model.launch_trame(app_name, body)
             self.set_status(200)
             await self.finish(instance.model_dump_json(by_alias=True))
 
