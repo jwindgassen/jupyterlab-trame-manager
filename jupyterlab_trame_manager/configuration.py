@@ -90,7 +90,7 @@ class UserData(ParentModel, extra="allow"):
     partitions: list[str]
 
 
-class ParaViewLaunchOptions(ParentModel):
+class ParaViewLaunchOptions(ParentModel, extra="allow"):
     """
     ParaView Server options, specified in the launch dialog.
     ToDo: Other systems might need other options
